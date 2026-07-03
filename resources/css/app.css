@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply text-neutral-800 antialiased;
+    }
+}
+
+@layer components {
+    .container-shop {
+        @apply max-w-container mx-auto px-4;
+    }
+
+    .btn-brand {
+        @apply inline-flex items-center justify-center rounded-md bg-brand-700 px-5 py-3
+            font-semibold text-white transition hover:bg-brand-800
+            focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
+    }
+
+    .btn-outline {
+        @apply inline-flex items-center justify-center rounded-md border border-neutral-300
+            bg-white px-5 py-3 font-semibold text-neutral-700 transition hover:border-brand-500 hover:text-brand-700;
+    }
+}

@@ -1,0 +1,19 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /sam/
+
+    # 1) public/ 에 실제로 존재하는 정적 파일(이미지, build, storage 심볼릭링크 등)은 그대로 서빙
+    #    단, index.php 는 제외 (제외 안 하면 public/index.php 로 잡혀 base 경로가 어긋남)
+    RewriteCond %{DOCUMENT_ROOT}/sam/public/$1 -f
+    RewriteCond $1 !^index\.php$
+    RewriteRule ^(.*)$ public/$1 [L]
+
+    # 2) public/ 에 없는 실제 프로젝트 파일/폴더 직접 접근 차단 (소스·설정·비공개 storage 보호)
+    RewriteRule ^(\.env|\.git|composer\.(json|lock)|package(-lock)?\.json|artisan|vite\.config\.js|tailwind\.config\.js|phpunit\.xml)$ - [F,L]
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|tests|vendor)/ - [F,L]
+
+    # 3) 그 외 모든 요청은 루트 index.php(Laravel)로 전달 → base 경로 = /sam
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
