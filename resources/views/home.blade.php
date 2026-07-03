@@ -98,16 +98,66 @@
 </section>
 @endif
 
-{{-- 브랜드 스토리 --}}
+{{-- 브랜드 스토리 + 재배 현장 영상 --}}
 <section class="my-12 bg-brand-800 text-white">
-    <div class="container-shop py-16 text-center max-w-3xl">
-        <p class="text-gold-400 font-semibold mb-3">OUR STORY</p>
-        <h2 class="text-2xl md:text-3xl font-bold leading-snug">산이 키운 진짜 삼,<br>강원도의 시간을 담았습니다</h2>
-        <p class="mt-6 text-white/80 leading-relaxed">
-            강원산양삼은 해발 700m 이상 고지대의 청정 산림에서 사람의 손길을 최소화하고
-            자연 그대로의 힘으로 산양삼을 재배합니다. 오랜 세월 산이 품어 키운 건강함을
-            정직하게 전해드립니다.
-        </p>
+    <div class="container-shop py-16 grid md:grid-cols-2 gap-10 items-center">
+        <div>
+            <p class="text-gold-400 font-semibold mb-3">OUR STORY</p>
+            <h2 class="text-2xl md:text-3xl font-bold leading-snug">산이 키운 진짜 삼,<br>강원도의 시간을 담았습니다</h2>
+            <p class="mt-6 text-white/80 leading-relaxed">
+                강원산양삼은 해발 700m 이상 고지대의 청정 산림에서 사람의 손길을 최소화하고
+                자연 그대로의 힘으로 산양삼을 재배합니다. 오랜 세월 산이 품어 키운 건강함을
+                정직하게 전해드립니다.
+            </p>
+        </div>
+
+        {{-- 재배 현장 영상 (포스터 → 클릭 재생) --}}
+        <div x-data="{ playing: false }" class="relative rounded-xl overflow-hidden shadow-2xl aspect-video bg-black">
+            <button x-show="!playing" @click="playing = true" class="absolute inset-0 group">
+                <img src="{{ asset('storage/farm/farm-video-poster.jpg') }}" alt="재배 현장" class="w-full h-full object-cover">
+                <span class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition"></span>
+                <span class="absolute inset-0 flex items-center justify-center">
+                    <span class="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center text-brand-700 text-xl pl-1 group-hover:scale-110 transition">▶</span>
+                </span>
+                <span class="absolute bottom-3 left-4 text-xs bg-black/50 px-3 py-1 rounded-full">재배 현장 영상 보기</span>
+            </button>
+            <template x-if="playing">
+                <video src="{{ asset('storage/farm/farm-video.mp4') }}" controls autoplay playsinline
+                       class="w-full h-full object-contain bg-black"></video>
+            </template>
+        </div>
+    </div>
+</section>
+
+{{-- 재배 환경 갤러리 (라이트박스) --}}
+<section class="container-shop py-12" x-data="farmGallery()">
+    <div class="text-center mb-8">
+        <p class="text-brand-600 font-semibold text-sm">GINSENG FARM</p>
+        <h2 class="text-xl md:text-2xl font-bold text-neutral-800">산양삼이 자라는 곳</h2>
+        <p class="text-neutral-500 mt-2 text-sm">강원도 깊은 소나무 숲, 붉게 익은 산양삼 열매</p>
+    </div>
+
+    <div class="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
+        @for ($i = 1; $i <= 12; $i++)
+            @php $n = sprintf('%02d', $i); @endphp
+            <button type="button" @click="open({{ $i - 1 }})"
+                    class="aspect-square rounded-lg overflow-hidden group focus:outline-none">
+                <img src="{{ asset('storage/farm/farm-'.$n.'-thumb.jpg') }}" loading="lazy" alt="재배지 사진 {{ $i }}"
+                     class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            </button>
+        @endfor
+    </div>
+
+    {{-- 라이트박스 --}}
+    <div x-show="isOpen" x-cloak @keydown.escape.window="close()" @keydown.arrow-right.window="next()" @keydown.arrow-left.window="prev()"
+         class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center" style="display:none">
+        <button @click="close()" class="absolute top-4 right-6 text-white/80 hover:text-white text-3xl">✕</button>
+        <button @click="prev()" class="absolute left-2 md:left-6 text-white/70 hover:text-white text-5xl px-2">‹</button>
+        <img :src="images[current]" alt="" class="max-h-[85vh] max-w-[90vw] object-contain rounded shadow-2xl">
+        <button @click="next()" class="absolute right-2 md:right-6 text-white/70 hover:text-white text-5xl px-2">›</button>
+        <div class="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/70 text-sm">
+            <span x-text="current + 1"></span> / <span x-text="images.length"></span>
+        </div>
     </div>
 </section>
 
@@ -130,3 +180,23 @@
 @endif
 
 @endsection
+
+@push('scripts')
+<script>
+function farmGallery() {
+    return {
+        isOpen: false,
+        current: 0,
+        images: [
+            @for ($i = 1; $i <= 16; $i++)
+                "{{ asset('storage/farm/farm-'.sprintf('%02d', $i).'.jpg') }}",
+            @endfor
+        ],
+        open(i) { this.current = i; this.isOpen = true; document.body.style.overflow = 'hidden'; },
+        close() { this.isOpen = false; document.body.style.overflow = ''; },
+        next() { this.current = (this.current + 1) % this.images.length; },
+        prev() { this.current = (this.current - 1 + this.images.length) % this.images.length; },
+    };
+}
+</script>
+@endpush

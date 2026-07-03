@@ -137,6 +137,9 @@
         </div>
     </div>
 
+    {{-- 재배지 실사 --}}
+    @include('partials.farm-origin')
+
     {{-- 연관 상품 --}}
     @if ($related->isNotEmpty())
     <div class="mt-16">
