@@ -21,6 +21,8 @@
             <p class="text-sm text-neutral-500 mt-1">총 {{ $products->total() }}개 상품</p>
         </div>
         <form method="GET" class="text-sm">
+            @foreach ((array) request('years', []) as $y)<input type="hidden" name="years[]" value="{{ $y }}">@endforeach
+            @if (request('price'))<input type="hidden" name="price" value="{{ request('price') }}">@endif
             <select name="sort" onchange="this.form.submit()" class="rounded-md border-neutral-300 text-sm py-2">
                 <option value="latest" @selected($sort==='latest')>최신순</option>
                 <option value="price_asc" @selected($sort==='price_asc')>낮은 가격순</option>
@@ -41,6 +43,9 @@
             @endforeach
         </div>
     @endif
+
+    {{-- 필터 --}}
+    @include('partials.product-filter')
 
     @if ($products->isEmpty())
         <div class="py-24 text-center text-neutral-400">등록된 상품이 없습니다.</div>

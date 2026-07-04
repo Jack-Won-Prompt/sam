@@ -39,6 +39,11 @@ class Product extends Model
         return $this->hasMany(Review::class)->latest();
     }
 
+    public function questions()
+    {
+        return $this->hasMany(ProductQuestion::class)->latest();
+    }
+
     public function getAvgRatingAttribute(): float
     {
         return round((float) $this->reviews()->avg('rating'), 1);

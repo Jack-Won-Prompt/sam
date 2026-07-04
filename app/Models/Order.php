@@ -55,6 +55,17 @@ class Order extends Model
         return $this->hasOne(Payment::class);
     }
 
+    public function returns()
+    {
+        return $this->hasMany(OrderReturn::class);
+    }
+
+    /** 교환/반품 신청 가능 여부 (배송중/배송완료) */
+    public function isReturnable(): bool
+    {
+        return in_array($this->status, ['shipped', 'delivered']);
+    }
+
     public function getStatusLabelAttribute(): string
     {
         return self::STATUSES[$this->status] ?? $this->status;

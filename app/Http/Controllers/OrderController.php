@@ -36,7 +36,7 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         abort_unless($order->user_id === auth()->id(), 403);
-        $order->load('items', 'payment');
+        $order->load('items', 'payment', 'returns');
 
         return view('order.show', compact('order'));
     }

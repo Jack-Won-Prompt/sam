@@ -28,6 +28,8 @@
                 ['admin.notices.index', 'admin.notices.*', '공지사항', '📢'],
                 ['admin.faqs.index', 'admin.faqs.*', 'FAQ 관리', '❓'],
                 ['admin.inquiries.index', 'admin.inquiries.*', '1:1 문의', '💬'],
+                ['admin.questions.index', 'admin.questions.*', '상품 문의', '🙋'],
+                ['admin.returns.index', 'admin.returns.*', '교환/반품', '🔄'],
             ];
         @endphp
         <nav class="flex-1 py-4">

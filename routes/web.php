@@ -45,6 +45,12 @@ Route::post('/product/{product}/reviews', [\App\Http\Controllers\ReviewControlle
 Route::delete('/reviews/{review}', [\App\Http\Controllers\ReviewController::class, 'destroy'])
     ->middleware('auth')->name('reviews.destroy');
 
+// 상품 Q&A
+Route::post('/product/{product}/questions', [\App\Http\Controllers\ProductQuestionController::class, 'store'])
+    ->middleware('auth')->name('questions.store');
+Route::delete('/questions/{question}', [\App\Http\Controllers\ProductQuestionController::class, 'destroy'])
+    ->middleware('auth')->name('questions.destroy');
+
 Route::get('/payment/{order}', [PaymentController::class, 'show'])->name('payment.show');
 Route::get('/payment/toss/success', [PaymentController::class, 'success'])->name('payment.success');
 Route::get('/payment/toss/fail', [PaymentController::class, 'fail'])->name('payment.fail');
@@ -82,6 +88,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/mypage/orders', [OrderController::class, 'index'])->name('order.index');
     Route::get('/mypage/orders/{order}', [OrderController::class, 'show'])->name('order.show');
     Route::post('/mypage/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
+    Route::post('/mypage/orders/{order}/return', [\App\Http\Controllers\OrderReturnController::class, 'store'])->name('order.return');
 
     // 찜하기
     Route::get('/mypage/wishlist', [\App\Http\Controllers\WishlistController::class, 'index'])->name('wishlist.index');
@@ -136,6 +143,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('inquiries', [\App\Http\Controllers\Admin\InquiryController::class, 'index'])->name('inquiries.index');
     Route::get('inquiries/{inquiry}', [\App\Http\Controllers\Admin\InquiryController::class, 'show'])->name('inquiries.show');
     Route::put('inquiries/{inquiry}/answer', [\App\Http\Controllers\Admin\InquiryController::class, 'answer'])->name('inquiries.answer');
+
+    Route::get('questions', [\App\Http\Controllers\Admin\ProductQuestionController::class, 'index'])->name('questions.index');
+    Route::put('questions/{question}/answer', [\App\Http\Controllers\Admin\ProductQuestionController::class, 'answer'])->name('questions.answer');
+
+    Route::get('returns', [\App\Http\Controllers\Admin\OrderReturnController::class, 'index'])->name('returns.index');
+    Route::put('returns/{return}/status', [\App\Http\Controllers\Admin\OrderReturnController::class, 'updateStatus'])->name('returns.status');
 });
 
 // 소셜 로그인

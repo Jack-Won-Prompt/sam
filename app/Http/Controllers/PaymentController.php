@@ -20,9 +20,10 @@ class PaymentController extends Controller
         $this->authorizeOrder($order);
 
         $clientKey = config('services.toss.client_key');
+        $customerKey = $order->user_id ? 'CUST_' . $order->user_id : 'GUEST_' . substr(md5($order->order_number), 0, 16);
         $order->load('items');
 
-        return view('payment.show', compact('order', 'clientKey'));
+        return view('payment.show', compact('order', 'clientKey', 'customerKey'));
     }
 
     /** 결제 성공 콜백 → 토스 승인(confirm) API 호출 */

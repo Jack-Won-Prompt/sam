@@ -15,7 +15,7 @@ class ProductController extends Controller
         abort_unless($product->is_active, 404);
 
         $product->increment('view_count');
-        $product->load(['images', 'options', 'category', 'reviews.user']);
+        $product->load(['images', 'options', 'category', 'reviews.user', 'questions.user']);
 
         // 최근 본 상품 (세션, 최대 12개)
         $recent = collect(session('recently_viewed', []))
