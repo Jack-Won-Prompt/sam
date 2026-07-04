@@ -17,6 +17,13 @@ class ProductController extends Controller
         $product->increment('view_count');
         $product->load(['images', 'options', 'category', 'reviews.user']);
 
+        // 최근 본 상품 (세션, 최대 12개)
+        $recent = collect(session('recently_viewed', []))
+            ->reject(fn ($id) => $id == $product->id)
+            ->prepend($product->id)
+            ->take(12)->values()->all();
+        session(['recently_viewed' => $recent]);
+
         $related = Product::active()
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)

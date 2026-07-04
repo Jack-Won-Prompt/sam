@@ -179,6 +179,18 @@
 </section>
 @endif
 
+{{-- 최근 본 상품 --}}
+@if (isset($recentProducts) && $recentProducts->isNotEmpty())
+<section class="container-shop py-8 mb-8">
+    <h2 class="text-lg font-bold text-neutral-800 mb-6">최근 본 상품</h2>
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-x-3 gap-y-6">
+        @foreach ($recentProducts as $product)
+            <x-product-card :product="$product" />
+        @endforeach
+    </div>
+</section>
+@endif
+
 @endsection
 
 @push('scripts')

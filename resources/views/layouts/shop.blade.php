@@ -7,6 +7,15 @@
     <title>@yield('title', '강원 산양삼 | 산이 키운 진짜 삼')</title>
     <meta name="description" content="@yield('meta_description', '해발 700m 강원도 청정 산속에서 자연 그대로 키운 산양삼 전문 쇼핑몰')">
 
+    {{-- Open Graph (SNS 공유) --}}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="강원 산양삼">
+    <meta property="og:title" content="@yield('title', '강원 산양삼 | 산이 키운 진짜 삼')">
+    <meta property="og:description" content="@yield('meta_description', '해발 700m 강원도 청정 산속에서 자연 그대로 키운 산양삼')">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="@yield('og_image', asset('storage/farm/farm-07.jpg'))">
+    <meta name="twitter:card" content="summary_large_image">
+
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 

@@ -25,6 +25,9 @@
                 ['admin.members.index', 'admin.members.*', '회원 관리', '👤'],
                 ['admin.coupons.index', 'admin.coupons.*', '쿠폰 관리', '🎟️'],
                 ['admin.banners.index', 'admin.banners.*', '배너 관리', '🖼️'],
+                ['admin.notices.index', 'admin.notices.*', '공지사항', '📢'],
+                ['admin.faqs.index', 'admin.faqs.*', 'FAQ 관리', '❓'],
+                ['admin.inquiries.index', 'admin.inquiries.*', '1:1 문의', '💬'],
             ];
         @endphp
         <nav class="flex-1 py-4">

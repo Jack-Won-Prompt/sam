@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// SEO (robots.txt는 public/robots.txt 정적 파일로 제공)
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+
 Route::get('/search', [ProductController::class, 'search'])->name('search');
 
 Route::get('/collection/{type}', [CategoryController::class, 'collection'])->name('collection');
@@ -52,6 +55,16 @@ Route::get('/order/complete/{order}', [OrderController::class, 'complete'])->nam
 // 비회원 주문조회
 Route::get('/order/track', [OrderController::class, 'trackForm'])->name('order.track');
 Route::post('/order/track', [OrderController::class, 'track'])->name('order.track.submit');
+
+// 고객센터 (공지/FAQ/1:1문의)
+Route::get('/support/notices', [\App\Http\Controllers\SupportController::class, 'notices'])->name('support.notices');
+Route::get('/support/notices/{notice}', [\App\Http\Controllers\SupportController::class, 'notice'])->name('support.notice');
+Route::get('/support/faq', [\App\Http\Controllers\SupportController::class, 'faq'])->name('support.faq');
+Route::middleware('auth')->group(function () {
+    Route::get('/support/inquiries', [\App\Http\Controllers\SupportController::class, 'inquiries'])->name('support.inquiries');
+    Route::get('/support/inquiries/create', [\App\Http\Controllers\SupportController::class, 'inquiryCreate'])->name('support.inquiry.create');
+    Route::post('/support/inquiries', [\App\Http\Controllers\SupportController::class, 'inquiryStore'])->name('support.inquiry.store');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -112,6 +125,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('members/{member}', [\App\Http\Controllers\Admin\MemberController::class, 'show'])->name('members.show');
 
     Route::resource('coupons', \App\Http\Controllers\Admin\CouponController::class)->except('show', 'edit', 'update');
+
+    Route::resource('notices', \App\Http\Controllers\Admin\NoticeController::class)->except('show');
+
+    Route::get('faqs', [\App\Http\Controllers\Admin\FaqController::class, 'index'])->name('faqs.index');
+    Route::post('faqs', [\App\Http\Controllers\Admin\FaqController::class, 'store'])->name('faqs.store');
+    Route::put('faqs/{faq}', [\App\Http\Controllers\Admin\FaqController::class, 'update'])->name('faqs.update');
+    Route::delete('faqs/{faq}', [\App\Http\Controllers\Admin\FaqController::class, 'destroy'])->name('faqs.destroy');
+
+    Route::get('inquiries', [\App\Http\Controllers\Admin\InquiryController::class, 'index'])->name('inquiries.index');
+    Route::get('inquiries/{inquiry}', [\App\Http\Controllers\Admin\InquiryController::class, 'show'])->name('inquiries.show');
+    Route::put('inquiries/{inquiry}/answer', [\App\Http\Controllers\Admin\InquiryController::class, 'answer'])->name('inquiries.answer');
 });
 
 // 소셜 로그인

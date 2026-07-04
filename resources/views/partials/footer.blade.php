@@ -16,12 +16,15 @@
             </div>
 
             <div>
-                <h4 class="text-white font-semibold mb-3 text-sm">쇼핑안내</h4>
+                <h4 class="text-white font-semibold mb-3 text-sm">고객센터</h4>
                 <ul class="space-y-2 text-sm">
-                    <li><a href="{{ route('cart.index') }}" class="hover:text-white">장바구니</a></li>
-                    <li><a href="{{ route('collection', 'best') }}" class="hover:text-white">베스트 상품</a></li>
-                    <li><a href="{{ route('collection', 'sale') }}" class="hover:text-white">특가 상품</a></li>
-                    @auth<li><a href="{{ route('order.index') }}" class="hover:text-white">주문/배송 조회</a></li>@endauth
+                    <li><a href="{{ route('support.notices') }}" class="hover:text-white">공지사항</a></li>
+                    <li><a href="{{ route('support.faq') }}" class="hover:text-white">자주 묻는 질문</a></li>
+                    <li><a href="{{ route('order.track') }}" class="hover:text-white">비회원 주문조회</a></li>
+                    @auth
+                        <li><a href="{{ route('support.inquiries') }}" class="hover:text-white">1:1 문의</a></li>
+                        <li><a href="{{ route('order.index') }}" class="hover:text-white">주문/배송 조회</a></li>
+                    @endauth
                 </ul>
             </div>
 

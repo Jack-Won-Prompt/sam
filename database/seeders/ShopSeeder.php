@@ -215,6 +215,28 @@ class ShopSeeder extends Seeder
             }
             Banner::create($b + ['is_active' => true]);
         }
+
+        // ---------- 공지사항 ----------
+        $notices = [
+            ['title' => '강원산양삼 쇼핑몰 오픈 안내', 'content' => "안녕하세요, 강원산양삼입니다.\n\n청정 강원도에서 자연 그대로 키운 산양삼을 온라인에서 만나보실 수 있습니다.\n앞으로 좋은 상품과 서비스로 보답하겠습니다. 감사합니다.", 'is_pinned' => true],
+            ['title' => '설/추석 명절 배송 안내', 'content' => "명절 연휴 기간 주문 폭주로 배송이 지연될 수 있습니다.\n여유 있게 주문해 주시기 바랍니다.", 'is_pinned' => false],
+            ['title' => '신선 산양삼 보관 방법 안내', 'content' => "신선 산양삼은 받으신 후 냉장 보관하시고, 가급적 빠른 시일 내에 드시는 것을 권장합니다.", 'is_pinned' => false],
+        ];
+        foreach ($notices as $n) {
+            \App\Models\Notice::firstOrCreate(['title' => $n['title']], $n);
+        }
+
+        // ---------- FAQ ----------
+        $faqs = [
+            ['category' => '배송', 'question' => '배송비는 얼마인가요?', 'answer' => '5만원 이상 구매 시 무료배송이며, 미만은 3,000원의 배송비가 부과됩니다.', 'sort_order' => 0],
+            ['category' => '배송', 'question' => '배송은 얼마나 걸리나요?', 'answer' => '결제 완료 후 평균 1~3일 내 발송됩니다. 신선상품 특성상 주말/공휴일 발송은 제한될 수 있습니다.', 'sort_order' => 1],
+            ['category' => '상품', 'question' => '산양삼은 어떻게 먹나요?', 'answer' => '생으로 드시거나 꿀에 재워 드시고, 달여서 물처럼 드셔도 좋습니다. 산양삼주로 담가 드시는 분도 많습니다.', 'sort_order' => 0],
+            ['category' => '결제', 'question' => '어떤 결제수단을 사용할 수 있나요?', 'answer' => '토스페이먼츠를 통한 신용/체크카드 결제를 지원합니다.', 'sort_order' => 0],
+            ['category' => '교환/반품', 'question' => '신선식품도 교환/반품이 되나요?', 'answer' => '신선식품 특성상 단순 변심에 의한 교환/반품은 어렵습니다. 상품 하자 시 수령 후 24시간 이내 고객센터로 연락 주세요.', 'sort_order' => 0],
+        ];
+        foreach ($faqs as $f) {
+            \App\Models\Faq::firstOrCreate(['question' => $f['question']], $f + ['is_active' => true]);
+        }
     }
 
     private function buildDescription(array $p): string

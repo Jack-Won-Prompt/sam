@@ -19,6 +19,14 @@ class HomeController extends Controller
         $mainCategories = Category::whereNull('parent_id')->where('is_active', true)
             ->orderBy('sort_order')->get();
 
-        return view('home', compact('banners', 'bestProducts', 'newProducts', 'mainCategories'));
+        // 최근 본 상품 (세션)
+        $recentIds = session('recently_viewed', []);
+        $recentProducts = collect();
+        if (! empty($recentIds)) {
+            $recentProducts = Product::active()->whereIn('id', $recentIds)->get()
+                ->sortBy(fn ($p) => array_search($p->id, $recentIds))->values();
+        }
+
+        return view('home', compact('banners', 'bestProducts', 'newProducts', 'mainCategories', 'recentProducts'));
     }
 }

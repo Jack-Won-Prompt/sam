@@ -55,18 +55,23 @@
                         <input name="receiver_phone" value="{{ old('receiver_phone') }}" required class="mt-1 w-full rounded-md border-neutral-300 text-sm">
                         @error('receiver_phone')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
                     </div>
-                    <div>
+                    <div class="sm:col-span-2">
                         <label class="text-sm text-neutral-600">우편번호</label>
-                        <input name="postcode" value="{{ old('postcode', auth()->user()->postcode ?? '') }}" class="mt-1 w-full rounded-md border-neutral-300 text-sm">
+                        <div class="flex gap-2 mt-1">
+                            <input id="postcode" name="postcode" value="{{ old('postcode', auth()->user()->postcode ?? '') }}" readonly placeholder="우편번호 찾기 클릭"
+                                   class="w-40 rounded-md border-neutral-300 bg-neutral-50 text-sm">
+                            <button type="button" onclick="openPostcode()" class="btn-outline py-2 px-4 text-sm whitespace-nowrap">우편번호 찾기</button>
+                        </div>
                     </div>
                     <div class="sm:col-span-2">
                         <label class="text-sm text-neutral-600">주소 *</label>
-                        <input name="address1" value="{{ old('address1', auth()->user()->address1 ?? '') }}" required class="mt-1 w-full rounded-md border-neutral-300 text-sm">
+                        <input id="address1" name="address1" value="{{ old('address1', auth()->user()->address1 ?? '') }}" required readonly
+                               class="mt-1 w-full rounded-md border-neutral-300 bg-neutral-50 text-sm">
                         @error('address1')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div class="sm:col-span-2">
                         <label class="text-sm text-neutral-600">상세주소</label>
-                        <input name="address2" value="{{ old('address2', auth()->user()->address2 ?? '') }}" class="mt-1 w-full rounded-md border-neutral-300 text-sm">
+                        <input id="address2" name="address2" value="{{ old('address2', auth()->user()->address2 ?? '') }}" placeholder="상세주소 입력 (동/호수 등)" class="mt-1 w-full rounded-md border-neutral-300 text-sm">
                     </div>
                     <div class="sm:col-span-2">
                         <label class="text-sm text-neutral-600">배송 메시지</label>
@@ -141,7 +146,20 @@
 @endsection
 
 @push('scripts')
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
+function openPostcode() {
+    new daum.Postcode({
+        oncomplete: function (data) {
+            // 도로명 주소 우선, 없으면 지번
+            var addr = data.roadAddress || data.jibunAddress;
+            document.getElementById('postcode').value = data.zonecode;
+            document.getElementById('address1').value = addr;
+            document.getElementById('address2').focus();
+        }
+    }).open();
+}
+
 function checkout(cfg) {
     return {
         ...cfg,

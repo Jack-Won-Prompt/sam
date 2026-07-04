@@ -10,6 +10,7 @@
             ['전체 주문', number_format($stats['orders_total']).'건', 'bg-brand-600'],
             ['누적 매출', number_format($stats['sales_total']).'원', 'bg-gold-600'],
             ['처리 대기(결제완료)', number_format($stats['pending']).'건', 'bg-amber-600'],
+            ['미답변 문의', number_format($stats['inquiries']).'건', 'bg-rose-600'],
             ['등록 상품', number_format($stats['products']).'개', 'bg-neutral-700'],
             ['가입 회원', number_format($stats['members']).'명', 'bg-neutral-600'],
         ];
@@ -20,6 +21,21 @@
             <p class="text-2xl font-extrabold mt-2">{{ $value }}</p>
         </div>
     @endforeach
+</div>
+
+{{-- 최근 14일 매출 차트 --}}
+<div class="bg-white rounded-xl border border-neutral-200 p-6 mb-8">
+    <h2 class="font-bold text-neutral-800 mb-5">최근 14일 매출</h2>
+    <div class="flex items-end gap-2 h-48">
+        @foreach ($days as $day)
+            <div class="flex-1 flex flex-col items-center justify-end h-full group">
+                <div class="text-[10px] text-neutral-500 mb-1 opacity-0 group-hover:opacity-100 whitespace-nowrap">{{ number_format($day['value']) }}</div>
+                <div class="w-full bg-brand-500 hover:bg-brand-600 rounded-t transition-all"
+                     style="height: {{ $day['value'] > 0 ? max(2, round($day['value'] / $chartMax * 100)) : 0.5 }}%"></div>
+                <div class="text-[10px] text-neutral-400 mt-1.5">{{ $day['label'] }}</div>
+            </div>
+        @endforeach
+    </div>
 </div>
 
 <div class="bg-white rounded-xl border border-neutral-200 overflow-hidden">
