@@ -16,8 +16,12 @@
         @foreach ($banners as $i => $banner)
             <a href="{{ $banner->link ?? '#' }}"
                x-show="active === {{ $i }}" x-transition.opacity.duration.700ms
-               class="absolute inset-0 flex items-center"
-               style="background: {{ $banner->image ? 'center/cover url('.asset('storage/'.$banner->image).')' : ($banner->bg_color ?? '#1f5fd0') }};">
+               class="absolute inset-0 flex items-center overflow-hidden"
+               style="background: {{ $banner->bg_color ?? '#1f5fd0' }};">
+                @if ($banner->image)
+                    <img src="{{ asset('storage/'.$banner->image) }}" alt="{{ $banner->title }}"
+                         class="kenburns absolute inset-0 w-full h-full object-cover">
+                @endif
                 <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
                 <div class="container-shop text-white relative">
                     <p class="text-sm md:text-base font-medium text-white/80 mb-3">GANGWON WILD GINSENG</p>
@@ -60,7 +64,7 @@
 </section>
 
 {{-- 카테고리 바로가기 --}}
-<section class="container-shop py-12">
+<section class="container-shop py-12" data-reveal>
     <h2 class="text-xl md:text-2xl font-bold text-center text-neutral-800 mb-8">카테고리</h2>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
         @foreach ($mainCategories as $cat)
@@ -82,7 +86,7 @@
 
 {{-- 베스트 상품 --}}
 @if ($bestProducts->isNotEmpty())
-<section class="container-shop py-8">
+<section class="container-shop py-8" data-reveal>
     <div class="flex items-end justify-between mb-6">
         <div>
             <p class="text-gold-500 font-semibold text-sm">BEST</p>
@@ -99,7 +103,7 @@
 @endif
 
 {{-- 브랜드 스토리 + 재배 현장 영상 --}}
-<section class="my-12 bg-brand-800 text-white">
+<section class="my-12 bg-brand-800 text-white" data-reveal>
     <div class="container-shop py-16 grid md:grid-cols-2 gap-10 items-center">
         <div>
             <p class="text-gold-400 font-semibold mb-3">OUR STORY</p>
@@ -130,7 +134,7 @@
 </section>
 
 {{-- 재배 환경 갤러리 (라이트박스) --}}
-<section class="container-shop py-12" x-data="farmGallery()">
+<section class="container-shop py-12" x-data="farmGallery()" data-reveal>
     <div class="text-center mb-8">
         <p class="text-brand-600 font-semibold text-sm">GINSENG FARM</p>
         <h2 class="text-xl md:text-2xl font-bold text-neutral-800">산양삼이 자라는 곳</h2>
@@ -163,7 +167,7 @@
 
 {{-- 신상품 --}}
 @if ($newProducts->isNotEmpty())
-<section class="container-shop py-8 mb-8">
+<section class="container-shop py-8 mb-8" data-reveal>
     <div class="flex items-end justify-between mb-6">
         <div>
             <p class="text-brand-600 font-semibold text-sm">NEW</p>
@@ -181,7 +185,7 @@
 
 {{-- 최근 본 상품 --}}
 @if (isset($recentProducts) && $recentProducts->isNotEmpty())
-<section class="container-shop py-8 mb-8">
+<section class="container-shop py-8 mb-8" data-reveal>
     <h2 class="text-lg font-bold text-neutral-800 mb-6">최근 본 상품</h2>
     <div class="grid grid-cols-2 md:grid-cols-6 gap-x-3 gap-y-6">
         @foreach ($recentProducts as $product)

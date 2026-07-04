@@ -6,6 +6,10 @@
     body {
         @apply text-neutral-800 antialiased;
     }
+    /* 부드러운 스크롤 */
+    html {
+        scroll-behavior: smooth;
+    }
 }
 
 @layer components {
@@ -15,12 +19,108 @@
 
     .btn-brand {
         @apply inline-flex items-center justify-center rounded-md bg-brand-700 px-5 py-3
-            font-semibold text-white transition hover:bg-brand-800
-            focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
+            font-semibold text-white transition-all duration-200 hover:bg-brand-800
+            active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
     }
 
     .btn-outline {
         @apply inline-flex items-center justify-center rounded-md border border-neutral-300
-            bg-white px-5 py-3 font-semibold text-neutral-700 transition hover:border-brand-500 hover:text-brand-700;
+            bg-white px-5 py-3 font-semibold text-neutral-700 transition-all duration-200
+            hover:border-brand-500 hover:text-brand-700 active:scale-[0.98];
     }
+}
+
+/* ---------------------------------------------------------------------------
+   프리미엄 인터랙션 (은은한 고급감)
+--------------------------------------------------------------------------- */
+
+/* 1) 스크롤 리빌 — 아래에서 부드럽게 등장 (JS 활성 시에만 숨김 → 안전) */
+html.js [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+}
+html.js [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    html.js [data-reveal] { opacity: 1; transform: none; transition: none; }
+}
+
+/* 2) 히어로 Ken Burns — 아주 천천히 확대/이동 */
+.kenburns {
+    animation: kenburns 18s ease-in-out infinite alternate;
+}
+@keyframes kenburns {
+    from { transform: scale(1.02) translate(0, 0); }
+    to   { transform: scale(1.12) translate(-2%, -1.5%); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .kenburns { animation: none; }
+}
+
+/* 3) 상품 카드 — 슬로우 리프트 + 이미지 줌 */
+.product-card-media {
+    overflow: hidden;
+}
+/* 뱃지(.absolute)는 제외하고 썸네일만 줌 */
+.product-card-media > div:not(.absolute) {
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.group:hover .product-card-media > div:not(.absolute) {
+    transform: scale(1.06);
+}
+
+/* 4) 헤더 축소 — 스크롤 시 얇아지고 그림자 */
+.site-header {
+    transition: box-shadow 0.3s ease;
+}
+.site-header.is-shrunk {
+    box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.15);
+}
+.site-header.is-shrunk .header-main {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+}
+.header-main {
+    transition: padding 0.3s ease;
+}
+
+/* 5) 토스트 알림 */
+.toast {
+    animation: toast-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.toast.toast-out {
+    animation: toast-out 0.3s ease forwards;
+}
+@keyframes toast-in {
+    from { opacity: 0; transform: translateY(16px) translateX(-50%); }
+    to   { opacity: 1; transform: translateY(0) translateX(-50%); }
+}
+@keyframes toast-out {
+    to { opacity: 0; transform: translateY(16px) translateX(-50%); }
+}
+
+/* 6) 카트 뱃지 통 튀기 */
+.cart-bump {
+    animation: cart-bump 0.5s cubic-bezier(0.28, 0.84, 0.42, 1);
+}
+@keyframes cart-bump {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.4); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+/* 7) 상세 이미지 확대(돋보기) */
+.zoom-frame {
+    overflow: hidden;
+    cursor: zoom-in;
+}
+.zoom-frame img,
+.zoom-frame > div {
+    transition: transform 0.15s ease-out;
 }

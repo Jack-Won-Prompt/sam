@@ -1,7 +1,7 @@
 @props(['product'])
 
 <a href="{{ route('product.show', $product) }}" class="group block">
-    <div class="relative rounded-lg overflow-hidden border border-neutral-200 bg-white transition group-hover:shadow-md">
+    <div class="product-card-media relative rounded-lg overflow-hidden border border-neutral-200 bg-white transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1 group-hover:border-brand-200">
         <x-thumb :product="$product" class="aspect-square" />
 
         <div class="absolute top-2 left-2 flex flex-col gap-1">

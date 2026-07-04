@@ -33,7 +33,7 @@
     <div class="grid md:grid-cols-2 gap-10">
         {{-- 이미지 --}}
         <div>
-            <x-thumb :product="$product" class="aspect-square rounded-xl shadow-sm" />
+            <x-thumb :product="$product" class="aspect-square rounded-xl shadow-sm {{ $product->thumbnail ? 'zoom-frame' : '' }}" />
             @if ($product->images->isNotEmpty())
                 <div class="grid grid-cols-5 gap-2 mt-3">
                     @foreach ($product->images->take(5) as $img)
@@ -179,6 +179,22 @@
         </div>
     </div>
     @endif
+
+    {{-- 모바일 구매바 여백 --}}
+    <div class="h-20 md:hidden"></div>
+
+    {{-- 모바일 하단 고정 구매바 --}}
+    <div class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-neutral-200 px-4 py-3 flex items-center gap-3"
+         style="box-shadow: 0 -4px 20px -8px rgba(0,0,0,0.12);">
+        <div class="flex-1">
+            <p class="text-[11px] text-neutral-400 leading-none">총 상품금액</p>
+            <p class="text-lg font-extrabold text-brand-700 leading-tight"><span x-text="number(totalPrice)"></span>원</p>
+        </div>
+        <button type="button" @click="submit('cart')" :disabled="loading"
+                class="btn-outline py-3 px-4 text-sm disabled:opacity-50">장바구니</button>
+        <button type="button" @click="submit('buy')" :disabled="loading"
+                class="btn-brand py-3 px-5 text-sm disabled:opacity-50">바로 구매</button>
+    </div>
 </div>
 @endsection
 
@@ -219,6 +235,7 @@ function productDetail(config) {
             this.loading = true;
             const token = document.querySelector('meta[name=csrf-token]').content;
             try {
+                let count = null;
                 for (const line of this.lines) {
                     const res = await fetch(this.addUrl, {
                         method: 'POST',
@@ -226,8 +243,17 @@ function productDetail(config) {
                         body: JSON.stringify({ product_id: this.productId, product_option_id: line.optionId, quantity: line.qty }),
                     });
                     if (!res.ok) throw new Error('담기 실패');
+                    const data = await res.json().catch(() => ({}));
+                    if (typeof data.count === 'number') count = data.count;
                 }
-                window.location = (mode === 'buy') ? this.checkoutUrl : this.cartUrl;
+                if (mode === 'buy') {
+                    window.location = this.checkoutUrl;
+                    return;
+                }
+                // 장바구니: 페이지 이동 없이 토스트 + 카트 뱃지 애니메이션
+                this.loading = false;
+                if (window.bumpCart) window.bumpCart(count);
+                if (window.samToast) window.samToast('장바구니에 담았습니다 🛒');
             } catch (e) {
                 this.error = '처리 중 오류가 발생했습니다. 다시 시도해주세요.';
                 this.loading = false;
