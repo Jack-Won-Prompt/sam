@@ -204,9 +204,9 @@ class ShopSeeder extends Seeder
         // ---------- 배너 ----------
         Banner::truncate();
         $banners = [
-            ['title' => '강원도 청정 산양삼', 'subtitle' => '해발 700m 소나무 숲, 산이 키운 진짜 삼', 'position' => 'main_slider', 'bg_color' => '#1f5fd0', 'image' => 'banners/farm-07.jpg', 'link' => '/category/sanyangsam', 'sort_order' => 0],
-            ['title' => '명절 선물, 정성을 담다', 'subtitle' => '프리미엄 산양삼 선물세트 최대 20% 할인', 'position' => 'main_slider', 'bg_color' => '#1c4fab', 'image' => 'banners/farm-08.jpg', 'link' => '/category/gift', 'sort_order' => 1],
-            ['title' => '자연 그대로, 무농약 재배', 'subtitle' => '깊은 산속에서 오랜 시간 정성으로', 'position' => 'main_slider', 'bg_color' => '#2570e6', 'image' => 'banners/farm-10.jpg', 'link' => '/category/processed', 'sort_order' => 2],
+            ['title' => '강원도 청정 산양삼', 'subtitle' => '해발 700m 소나무 숲, 산이 키운 진짜 삼', 'position' => 'main_slider', 'bg_color' => '#1f5fd0', 'image' => 'farm/farm-07.jpg', 'link' => '/category/sanyangsam', 'sort_order' => 0],
+            ['title' => '명절 선물, 정성을 담다', 'subtitle' => '프리미엄 산양삼 선물세트 최대 20% 할인', 'position' => 'main_slider', 'bg_color' => '#1c4fab', 'image' => 'farm/farm-08.jpg', 'link' => '/category/gift', 'sort_order' => 1],
+            ['title' => '자연 그대로, 무농약 재배', 'subtitle' => '깊은 산속에서 오랜 시간 정성으로', 'position' => 'main_slider', 'bg_color' => '#2570e6', 'image' => 'farm/farm-10.jpg', 'link' => '/category/processed', 'sort_order' => 2],
         ];
         foreach ($banners as $b) {
             $img = $b['image'];
