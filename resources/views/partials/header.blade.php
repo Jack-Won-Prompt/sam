@@ -11,6 +11,7 @@
                     <button class="hover:text-white">로그아웃</button>
                 </form>
             @else
+                <a href="{{ route('order.track') }}" class="hover:text-white">주문조회</a>
                 <a href="{{ route('login') }}" class="hover:text-white">로그인</a>
                 <a href="{{ route('register') }}" class="hover:text-white">회원가입</a>
             @endauth

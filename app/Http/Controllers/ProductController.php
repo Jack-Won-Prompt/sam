@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Product;
+use App\Models\Review;
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -12,14 +15,24 @@ class ProductController extends Controller
         abort_unless($product->is_active, 404);
 
         $product->increment('view_count');
-        $product->load(['images', 'options', 'category']);
+        $product->load(['images', 'options', 'category', 'reviews.user']);
 
         $related = Product::active()
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->take(4)->get();
 
-        return view('product.show', compact('product', 'related'));
+        // 찜 여부
+        $isWished = auth()->check() && Wishlist::where('user_id', auth()->id())
+            ->where('product_id', $product->id)->exists();
+
+        // 리뷰 작성 가능 여부 (구매 이력)
+        $canReview = auth()->check() && Order::where('user_id', auth()->id())
+            ->whereIn('status', ['paid', 'preparing', 'shipped', 'delivered'])
+            ->whereHas('items', fn ($q) => $q->where('product_id', $product->id))
+            ->exists();
+
+        return view('product.show', compact('product', 'related', 'isWished', 'canReview'));
     }
 
     public function search(Request $request)

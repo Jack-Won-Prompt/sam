@@ -53,6 +53,16 @@
             <h1 class="mt-3 text-2xl font-bold text-neutral-900 leading-snug">{{ $product->name }}</h1>
             <p class="mt-2 text-neutral-500">{{ $product->short_description }}</p>
 
+            @if ($product->reviews->isNotEmpty())
+                <a href="#reviews" class="mt-2 inline-flex items-center gap-1.5 text-sm">
+                    <span class="text-gold-500">
+                        @for ($s = 1; $s <= 5; $s++){{ $s <= round($product->avg_rating) ? '★' : '☆' }}@endfor
+                    </span>
+                    <span class="font-semibold text-neutral-700">{{ $product->avg_rating }}</span>
+                    <span class="text-neutral-400">리뷰 {{ $product->reviews->count() }}개</span>
+                </a>
+            @endif
+
             <div class="mt-5 flex items-baseline gap-3">
                 @if ($product->discount_rate > 0)
                     <span class="text-2xl font-bold text-red-500">{{ $product->discount_rate }}%</span>
@@ -118,11 +128,20 @@
             </div>
 
             {{-- 버튼 --}}
-            <div class="mt-5 grid grid-cols-2 gap-3">
+            <div class="mt-5 flex gap-3">
+                {{-- 찜하기 --}}
+                <form method="POST" action="{{ route('wishlist.toggle', $product) }}"
+                      onsubmit="return {{ auth()->check() ? 'true' : 'false' }} || (window.location='{{ route('login') }}', false)">
+                    @csrf
+                    <button type="submit" title="찜하기"
+                            class="h-full aspect-square px-4 rounded-md border {{ ($isWished ?? false) ? 'border-red-300 text-red-500 bg-red-50' : 'border-neutral-300 text-neutral-400' }} hover:border-red-400 hover:text-red-500 transition">
+                        <span class="text-2xl">{{ ($isWished ?? false) ? '♥' : '♡' }}</span>
+                    </button>
+                </form>
                 <button type="button" @click="submit('cart')" :disabled="loading"
-                        class="btn-outline py-4 text-base disabled:opacity-50">장바구니</button>
+                        class="btn-outline flex-1 py-4 text-base disabled:opacity-50">장바구니</button>
                 <button type="button" @click="submit('buy')" :disabled="loading"
-                        class="btn-brand py-4 text-base disabled:opacity-50">바로 구매</button>
+                        class="btn-brand flex-1 py-4 text-base disabled:opacity-50">바로 구매</button>
             </div>
             <p x-show="error" x-text="error" class="mt-3 text-sm text-red-500"></p>
         </div>
@@ -136,6 +155,9 @@
             {!! $product->description !!}
         </div>
     </div>
+
+    {{-- 리뷰 --}}
+    @include('partials.reviews')
 
     {{-- 재배지 실사 --}}
     @include('partials.farm-origin')

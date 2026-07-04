@@ -34,5 +34,9 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(Login::class, function (Login $event) {
             app(CartService::class)->mergeGuestCart($event->user->getAuthIdentifier());
         });
+
+        // 소셜 로그인 프로바이더 등록 (카카오/네이버)
+        Event::listen(\SocialiteProviders\Manager\SocialiteWasCalled::class, [\SocialiteProviders\Kakao\KakaoExtendSocialite::class, 'handle']);
+        Event::listen(\SocialiteProviders\Manager\SocialiteWasCalled::class, [\SocialiteProviders\Naver\NaverExtendSocialite::class, 'handle']);
     }
 }

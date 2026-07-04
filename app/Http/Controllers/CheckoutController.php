@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Services\CartService;
+use App\Services\CouponService;
+use App\Services\PointService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
 {
-    public function __construct(private CartService $cart) {}
+    public function __construct(
+        private CartService $cart,
+        private CouponService $coupons,
+        private PointService $points,
+    ) {}
 
     public function index()
     {
@@ -24,8 +31,22 @@ class CheckoutController extends Controller
         $subtotal = $this->cart->subtotal();
         $shippingFee = $this->cart->shippingFee($subtotal);
         $total = $subtotal + $shippingFee;
+        $userPoints = auth()->user()->points ?? 0;
 
-        return view('checkout.index', compact('items', 'subtotal', 'shippingFee', 'total'));
+        return view('checkout.index', compact('items', 'subtotal', 'shippingFee', 'total', 'userPoints'));
+    }
+
+    /** 쿠폰 적용 (AJAX) */
+    public function applyCoupon(Request $request)
+    {
+        $subtotal = $this->cart->subtotal();
+        $result = $this->coupons->validate($request->input('code'), $subtotal, auth()->user());
+
+        return response()->json([
+            'ok' => $result['ok'],
+            'message' => $result['message'],
+            'discount' => $result['discount'],
+        ]);
     }
 
     public function store(Request $request)
@@ -45,22 +66,51 @@ class CheckoutController extends Controller
             'address1' => 'required|string|max:200',
             'address2' => 'nullable|string|max:200',
             'delivery_message' => 'nullable|string|max:200',
+            'coupon_code' => 'nullable|string|max:50',
+            'points_used' => 'nullable|integer|min:0',
         ]);
 
         $subtotal = $this->cart->subtotal();
         $shippingFee = $this->cart->shippingFee($subtotal);
-        $total = $subtotal + $shippingFee;
+        $user = auth()->user();
 
-        $order = DB::transaction(function () use ($data, $items, $subtotal, $shippingFee, $total) {
-            $order = Order::create(array_merge($data, [
-                'order_number' => $this->generateOrderNumber(),
-                'user_id' => auth()->id(),
-                'subtotal' => $subtotal,
-                'shipping_fee' => $shippingFee,
-                'discount' => 0,
-                'total' => $total,
-                'status' => 'pending',
-            ]));
+        // 쿠폰 할인
+        $discount = 0;
+        $couponCode = null;
+        $coupon = null;
+        if (! empty($data['coupon_code'])) {
+            $cres = $this->coupons->validate($data['coupon_code'], $subtotal, $user);
+            if ($cres['ok']) {
+                $discount = $cres['discount'];
+                $coupon = $cres['coupon'];
+                $couponCode = $coupon->code;
+            }
+        }
+
+        // 적립금 사용 (회원, 잔액·주문금액 한도)
+        $pointsUsed = 0;
+        if ($user && ! empty($data['points_used'])) {
+            $maxUse = max(0, $subtotal + $shippingFee - $discount);
+            $pointsUsed = min((int) $data['points_used'], $user->points, $maxUse);
+        }
+
+        $total = max(0, $subtotal + $shippingFee - $discount - $pointsUsed);
+
+        $order = DB::transaction(function () use ($data, $items, $subtotal, $shippingFee, $discount, $pointsUsed, $couponCode, $coupon, $total, $user) {
+            $order = Order::create(array_merge(
+                collect($data)->except(['coupon_code', 'points_used'])->toArray(),
+                [
+                    'order_number' => $this->generateOrderNumber(),
+                    'user_id' => $user?->id,
+                    'subtotal' => $subtotal,
+                    'shipping_fee' => $shippingFee,
+                    'discount' => $discount,
+                    'points_used' => $pointsUsed,
+                    'coupon_code' => $couponCode,
+                    'total' => $total,
+                    'status' => 'pending',
+                ]
+            ));
 
             foreach ($items as $item) {
                 OrderItem::create([
@@ -81,6 +131,15 @@ class CheckoutController extends Controller
                 'amount' => $total,
                 'status' => 'ready',
             ]);
+
+            // 적립금 즉시 차감 (취소 시 환급)
+            if ($user && $pointsUsed > 0) {
+                $this->points->use($user, $pointsUsed, "주문 사용 ({$order->order_number})", $order->id);
+            }
+            // 쿠폰 사용 카운트
+            if ($coupon) {
+                $coupon->increment('used_count');
+            }
 
             return $order;
         });

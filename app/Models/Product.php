@@ -34,6 +34,16 @@ class Product extends Model
         return $this->hasMany(ProductOption::class)->orderBy('sort_order');
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class)->latest();
+    }
+
+    public function getAvgRatingAttribute(): float
+    {
+        return round((float) $this->reviews()->avg('rating'), 1);
+    }
+
     /** 실판매가 (할인가 있으면 할인가) */
     public function getCurrentPriceAttribute(): int
     {

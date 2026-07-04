@@ -28,6 +28,9 @@ class User extends Authenticatable
         'password',
         'is_admin',
         'points',
+        'provider',
+        'provider_id',
+        'avatar',
     ];
 
     /**
@@ -67,5 +70,10 @@ class User extends Authenticatable
     public function wishlists()
     {
         return $this->hasMany(Wishlist::class);
+    }
+
+    public function pointHistories()
+    {
+        return $this->hasMany(PointHistory::class)->latest();
     }
 }

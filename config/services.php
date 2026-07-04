@@ -40,4 +40,16 @@ return [
         'secret_key' => env('TOSS_SECRET_KEY'),
     ],
 
+    'kakao' => [
+        'client_id' => env('KAKAO_CLIENT_ID'),
+        'client_secret' => env('KAKAO_CLIENT_SECRET'),
+        'redirect' => env('KAKAO_REDIRECT_URI', '/auth/kakao/callback'),
+    ],
+
+    'naver' => [
+        'client_id' => env('NAVER_CLIENT_ID'),
+        'client_secret' => env('NAVER_CLIENT_SECRET'),
+        'redirect' => env('NAVER_REDIRECT_URI', '/auth/naver/callback'),
+    ],
+
 ];

@@ -68,6 +68,26 @@
             <p class="text-xs text-neutral-400 mt-2">주문일시: {{ $order->created_at->format('Y-m-d H:i') }}</p>
         </div>
 
+        {{-- 발송 처리 (송장) --}}
+        <div class="bg-white rounded-xl border border-neutral-200 p-5">
+            <h3 class="font-bold text-neutral-800 mb-3">배송 / 송장</h3>
+            @if ($order->tracking_number)
+                <p class="text-sm mb-3"><b>{{ $order->courier_name }}</b> {{ $order->tracking_number }}
+                    @if ($order->shipped_at)<span class="text-neutral-400 text-xs block">{{ $order->shipped_at->format('Y-m-d H:i') }} 발송</span>@endif
+                </p>
+            @endif
+            <form method="POST" action="{{ route('admin.orders.ship', $order) }}" class="space-y-2">
+                @csrf @method('PUT')
+                <select name="courier" class="w-full rounded-md border-neutral-300 text-sm">
+                    @foreach ($couriers as $key => $c)
+                        <option value="{{ $key }}" @selected($order->courier===$key)>{{ $c['name'] }}</option>
+                    @endforeach
+                </select>
+                <input name="tracking_number" value="{{ $order->tracking_number }}" placeholder="송장번호" class="w-full rounded-md border-neutral-300 text-sm">
+                <button class="btn-brand w-full py-2 text-sm">{{ $order->tracking_number ? '송장 수정' : '발송 처리' }}</button>
+            </form>
+        </div>
+
         <div class="bg-white rounded-xl border border-neutral-200 p-5 text-sm">
             <h3 class="font-bold text-neutral-800 mb-3">결제 정보</h3>
             @if ($order->payment)

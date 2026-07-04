@@ -1,0 +1,25 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('provider')->nullable()->after('points');      // kakao / naver
+            $table->string('provider_id')->nullable()->after('provider');
+            $table->string('avatar')->nullable()->after('provider_id');
+            $table->string('password')->nullable()->change();             // 소셜 가입은 비번 없음
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['provider', 'provider_id', 'avatar']);
+        });
+    }
+};

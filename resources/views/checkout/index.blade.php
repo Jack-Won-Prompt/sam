@@ -95,21 +95,92 @@
         </div>
 
         {{-- 결제 요약 --}}
-        <div>
+        <div x-data="checkout({ subtotal: {{ $subtotal }}, shipping: {{ $shippingFee }}, userPoints: {{ $userPoints ?? 0 }}, couponUrl: '{{ route('checkout.coupon') }}' })">
             <div class="border border-neutral-200 rounded-lg p-6 bg-white sticky top-28">
                 <h2 class="font-bold text-neutral-800 mb-4">결제 금액</h2>
-                <dl class="space-y-2 text-sm">
+
+                {{-- 쿠폰 --}}
+                <div class="mb-3">
+                    <label class="block text-xs text-neutral-500 mb-1">쿠폰</label>
+                    <div class="flex gap-2">
+                        <input type="text" name="coupon_code" x-model="couponCode" placeholder="쿠폰 코드"
+                               class="flex-1 rounded-md border-neutral-300 text-sm py-2">
+                        <button type="button" @click="applyCoupon" class="btn-outline py-2 px-3 text-sm whitespace-nowrap">적용</button>
+                    </div>
+                    <p class="text-xs mt-1" :class="couponOk ? 'text-brand-600' : 'text-red-500'" x-text="couponMsg"></p>
+                </div>
+
+                {{-- 적립금 --}}
+                @auth
+                <div class="mb-4">
+                    <label class="block text-xs text-neutral-500 mb-1">적립금 사용 (보유 <span class="font-semibold text-brand-700">{{ number_format($userPoints ?? 0) }}P</span>)</label>
+                    <div class="flex gap-2">
+                        <input type="number" name="points_used" x-model.number="pointsUsed" min="0" max="{{ $userPoints ?? 0 }}" placeholder="0"
+                               @input="clampPoints" class="flex-1 rounded-md border-neutral-300 text-sm py-2">
+                        <button type="button" @click="useAllPoints" class="btn-outline py-2 px-3 text-sm whitespace-nowrap">전액</button>
+                    </div>
+                </div>
+                @endauth
+
+                <dl class="space-y-2 text-sm border-t border-neutral-100 pt-4">
                     <div class="flex justify-between"><dt class="text-neutral-500">상품금액</dt><dd class="font-medium">{{ number_format($subtotal) }}원</dd></div>
                     <div class="flex justify-between"><dt class="text-neutral-500">배송비</dt><dd class="font-medium">{{ $shippingFee > 0 ? number_format($shippingFee).'원' : '무료' }}</dd></div>
+                    <div class="flex justify-between text-red-500" x-show="discount > 0"><dt>쿠폰할인</dt><dd>-<span x-text="won(discount)"></span>원</dd></div>
+                    <div class="flex justify-between text-red-500" x-show="pointsUsed > 0"><dt>적립금</dt><dd>-<span x-text="won(pointsUsed)"></span>원</dd></div>
                 </dl>
                 <div class="flex justify-between items-baseline border-t border-neutral-200 mt-4 pt-4">
                     <span class="font-semibold">최종 결제금액</span>
-                    <span class="text-2xl font-extrabold text-brand-700">{{ number_format($total) }}원</span>
+                    <span class="text-2xl font-extrabold text-brand-700"><span x-text="won(total)"></span>원</span>
                 </div>
-                <button class="btn-brand w-full mt-6">{{ number_format($total) }}원 결제하기</button>
+                <button class="btn-brand w-full mt-6"><span x-text="won(total)"></span>원 결제하기</button>
                 <p class="text-xs text-neutral-400 mt-3 text-center">주문 내용을 확인했으며 결제에 동의합니다.</p>
             </div>
         </div>
     </form>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function checkout(cfg) {
+    return {
+        ...cfg,
+        couponCode: '',
+        discount: 0,
+        pointsUsed: 0,
+        couponMsg: '',
+        couponOk: false,
+        get total() {
+            return Math.max(0, this.subtotal + this.shipping - this.discount - (this.pointsUsed || 0));
+        },
+        won(n) { return Number(n || 0).toLocaleString('ko-KR'); },
+        clampPoints() {
+            let max = Math.min(this.userPoints, this.subtotal + this.shipping - this.discount);
+            if (this.pointsUsed > max) this.pointsUsed = max;
+            if (this.pointsUsed < 0 || isNaN(this.pointsUsed)) this.pointsUsed = 0;
+        },
+        useAllPoints() {
+            this.pointsUsed = Math.min(this.userPoints, this.subtotal + this.shipping - this.discount);
+        },
+        async applyCoupon() {
+            if (!this.couponCode.trim()) { this.couponMsg = '쿠폰 코드를 입력하세요.'; this.couponOk = false; return; }
+            const token = document.querySelector('meta[name=csrf-token]').content;
+            try {
+                const res = await fetch(this.couponUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+                    body: JSON.stringify({ code: this.couponCode }),
+                });
+                const data = await res.json();
+                this.couponOk = data.ok;
+                this.couponMsg = data.message;
+                this.discount = data.ok ? data.discount : 0;
+                this.clampPoints();
+            } catch (e) {
+                this.couponMsg = '쿠폰 확인 중 오류가 발생했습니다.'; this.couponOk = false;
+            }
+        },
+    };
+}
+</script>
+@endpush

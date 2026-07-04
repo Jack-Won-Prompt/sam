@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Services\OrderService;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    public function __construct(private OrderService $orders) {}
+
     public function index(Request $request)
     {
         $orders = Order::with('items')
@@ -36,6 +39,7 @@ class OrderController extends Controller
         return view('admin.orders.show', [
             'order' => $order,
             'statuses' => Order::STATUSES,
+            'couriers' => Order::COURIERS,
         ]);
     }
 
@@ -45,8 +49,27 @@ class OrderController extends Controller
             'status' => 'required|in:' . implode(',', array_keys(Order::STATUSES)),
         ]);
 
+        // 취소/환불은 서비스 통해 재고복구/결제취소 처리
+        if (in_array($data['status'], ['cancelled', 'refunded'])) {
+            $result = $this->orders->cancel($order, '관리자 처리', $data['status'] === 'refunded');
+            return back()->with($result['ok'] ? 'success' : 'error', $result['message']);
+        }
+
         $order->update(['status' => $data['status']]);
 
         return back()->with('success', '주문 상태가 변경되었습니다.');
+    }
+
+    /** 발송 처리 (송장 등록) */
+    public function ship(Request $request, Order $order)
+    {
+        $data = $request->validate([
+            'courier' => 'required|string',
+            'tracking_number' => 'required|string|max:50',
+        ]);
+
+        $this->orders->ship($order, $data['courier'], $data['tracking_number']);
+
+        return back()->with('success', '발송 처리되었습니다.');
     }
 }

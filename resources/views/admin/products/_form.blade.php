@@ -129,6 +129,24 @@
             <p class="text-xs text-neutral-400 mt-2">미등록 시 상품명 기반 플레이스홀더가 표시됩니다.</p>
         </div>
 
+        {{-- 추가 이미지(상세 갤러리) --}}
+        <div class="bg-white rounded-xl border border-neutral-200 p-6">
+            <h2 class="font-bold text-neutral-800 mb-3">추가 이미지 (상세)</h2>
+            @if ($product && $product->images->isNotEmpty())
+                <div class="grid grid-cols-3 gap-2 mb-3">
+                    @foreach ($product->images as $img)
+                        <div class="relative group" id="pimg-{{ $img->id }}">
+                            <img src="{{ asset('storage/'.$img->path) }}" class="w-full aspect-square object-cover rounded-md" alt="">
+                            <button type="button" onclick="deleteProductImage({{ $img->id }})"
+                                    class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white text-xs">✕</button>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+            <input type="file" name="images[]" accept="image/*" multiple class="w-full text-sm">
+            <p class="text-xs text-neutral-400 mt-2">여러 장 선택 가능 (상품 상세페이지에 표시)</p>
+        </div>
+
         <div class="flex gap-2">
             <button class="btn-brand flex-1 py-3">{{ $product ? '수정' : '등록' }}</button>
             <a href="{{ route('admin.products.index') }}" class="btn-outline py-3">취소</a>

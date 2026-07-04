@@ -23,6 +23,7 @@
                 ['admin.categories.index', 'admin.categories.*', '카테고리', '🗂️'],
                 ['admin.orders.index', 'admin.orders.*', '주문 관리', '🧾'],
                 ['admin.members.index', 'admin.members.*', '회원 관리', '👤'],
+                ['admin.coupons.index', 'admin.coupons.*', '쿠폰 관리', '🎟️'],
                 ['admin.banners.index', 'admin.banners.*', '배너 관리', '🖼️'],
             ];
         @endphp

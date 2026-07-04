@@ -12,34 +12,27 @@
 
     <h1 class="text-2xl font-bold text-neutral-800 mb-6">주문 상세</h1>
 
-    <div class="border border-neutral-200 rounded-lg bg-white overflow-hidden">
-        <div class="px-6 py-4 border-b border-neutral-100 flex justify-between items-center">
-            <span class="font-semibold text-brand-800">{{ $order->status_label }}</span>
-            <span class="text-sm text-neutral-500">{{ $order->created_at->format('Y-m-d H:i') }}</span>
-        </div>
-        <div class="p-6 divide-y divide-neutral-100">
-            @foreach ($order->items as $item)
-                <div class="flex justify-between py-3 text-sm">
-                    <span class="text-neutral-700">{{ $item->product_name }}
-                        @if ($item->option_name)<span class="text-neutral-400">/ {{ $item->option_name }}</span>@endif
-                        × {{ $item->quantity }}</span>
-                    <span class="font-medium">{{ number_format($item->subtotal) }}원</span>
+    @include('partials.order-detail')
+
+    @if ($order->isCancellable())
+        <div class="mt-6 text-right"
+             x-data="{ open: false }">
+            <button @click="open = true" class="btn-outline text-sm text-red-600 border-red-200 hover:border-red-400">주문 취소</button>
+
+            <div x-show="open" x-cloak class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" style="display:none">
+                <div @click.outside="open = false" class="bg-white rounded-xl p-6 max-w-sm w-full text-left">
+                    <h3 class="font-bold text-neutral-800 mb-3">주문을 취소하시겠습니까?</h3>
+                    <form method="POST" action="{{ route('order.cancel', $order) }}">
+                        @csrf
+                        <textarea name="reason" rows="2" placeholder="취소 사유 (선택)" class="w-full rounded-md border-neutral-300 text-sm mb-3"></textarea>
+                        <div class="flex gap-2 justify-end">
+                            <button type="button" @click="open = false" class="btn-outline py-2 px-4 text-sm">닫기</button>
+                            <button class="btn-brand py-2 px-4 text-sm bg-red-600 hover:bg-red-700">취소하기</button>
+                        </div>
+                    </form>
                 </div>
-            @endforeach
+            </div>
         </div>
-        <dl class="px-6 pb-6 space-y-1.5 text-sm">
-            <div class="flex justify-between"><dt class="text-neutral-500">상품금액</dt><dd>{{ number_format($order->subtotal) }}원</dd></div>
-            <div class="flex justify-between"><dt class="text-neutral-500">배송비</dt><dd>{{ $order->shipping_fee > 0 ? number_format($order->shipping_fee).'원' : '무료' }}</dd></div>
-            <div class="flex justify-between text-base font-bold pt-2 border-t border-neutral-200"><dt>결제금액</dt><dd class="text-brand-700">{{ number_format($order->total) }}원</dd></div>
-            @if ($order->payment_method)
-                <div class="flex justify-between text-neutral-500"><dt>결제수단</dt><dd>{{ $order->payment_method }}</dd></div>
-            @endif
-        </dl>
-        <div class="px-6 py-4 bg-neutral-50 border-t border-neutral-100 text-sm text-neutral-600">
-            <p><b>받는분</b> {{ $order->receiver_name }} ({{ $order->receiver_phone }})</p>
-            <p class="mt-1"><b>배송지</b> [{{ $order->postcode }}] {{ $order->address1 }} {{ $order->address2 }}</p>
-            @if ($order->delivery_message)<p class="mt-1"><b>메시지</b> {{ $order->delivery_message }}</p>@endif
-        </div>
-    </div>
+    @endif
 </div>
 @endsection

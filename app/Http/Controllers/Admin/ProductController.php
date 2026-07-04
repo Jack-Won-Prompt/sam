@@ -37,6 +37,7 @@ class ProductController extends Controller
 
         $product = Product::create($data);
         $this->syncOptions($request, $product);
+        $this->storeImages($request, $product);
 
         return redirect()->route('admin.products.index')->with('success', '상품이 등록되었습니다.');
     }
@@ -44,7 +45,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::orderBy('sort_order')->get();
-        $product->load('options');
+        $product->load('options', 'images');
 
         return view('admin.products.edit', compact('product', 'categories'));
     }
@@ -60,6 +61,7 @@ class ProductController extends Controller
 
         $product->update($data);
         $this->syncOptions($request, $product);
+        $this->storeImages($request, $product);
 
         return redirect()->route('admin.products.index')->with('success', '상품이 수정되었습니다.');
     }
@@ -69,6 +71,32 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('admin.products.index')->with('success', '상품이 삭제되었습니다.');
+    }
+
+    /** 추가 이미지 저장 (images[]) */
+    private function storeImages(Request $request, Product $product): void
+    {
+        if (! $request->hasFile('images')) {
+            return;
+        }
+        $order = (int) $product->images()->max('sort_order');
+        foreach ($request->file('images') as $file) {
+            if (! $file) {
+                continue;
+            }
+            $product->images()->create([
+                'path' => $file->store('products', 'public'),
+                'sort_order' => ++$order,
+            ]);
+        }
+    }
+
+    /** 추가 이미지 삭제 */
+    public function destroyImage(\App\Models\ProductImage $image)
+    {
+        $image->delete();
+
+        return back()->with('success', '이미지가 삭제되었습니다.');
     }
 
     private function validateData(Request $request, ?int $ignoreId = null): array
@@ -86,6 +114,8 @@ class ProductController extends Controller
             'sale_price' => 'nullable|integer|min:0',
             'stock' => 'required|integer|min:0',
             'thumbnail' => 'nullable|image|max:4096',
+            'images' => 'nullable|array',
+            'images.*' => 'image|max:4096',
             'sort_order' => 'nullable|integer',
         ]);
     }

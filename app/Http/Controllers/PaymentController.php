@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Services\CartService;
+use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
-    public function __construct(private CartService $cart) {}
+    public function __construct(private CartService $cart, private OrderService $orders) {}
 
     /** 토스페이먼츠 결제창 페이지 */
     public function show(Order $order)
@@ -62,18 +63,11 @@ class PaymentController extends Controller
 
         $result = $response->json();
 
-        $order->payment?->update([
-            'payment_key' => $paymentKey,
-            'method' => $result['method'] ?? null,
-            'status' => 'done',
-            'approved_at' => $result['approvedAt'] ?? now(),
+        $this->orders->markPaid($order, [
+            'paymentKey' => $paymentKey,
+            'method' => $result['method'] ?? '카드',
+            'approvedAt' => $result['approvedAt'] ?? now(),
             'raw' => $result,
-        ]);
-
-        $order->update([
-            'status' => 'paid',
-            'payment_method' => $result['method'] ?? '카드',
-            'paid_at' => now(),
         ]);
 
         // 결제 완료 → 장바구니 비우기
@@ -92,18 +86,11 @@ class PaymentController extends Controller
         abort_if($order->status !== 'pending', 404);
         $this->authorizeOrder($order);
 
-        $order->payment?->update([
-            'payment_key' => 'TEST_' . strtoupper(\Illuminate\Support\Str::random(12)),
+        $this->orders->markPaid($order, [
+            'paymentKey' => 'TEST_' . strtoupper(\Illuminate\Support\Str::random(12)),
             'method' => '테스트결제',
-            'status' => 'done',
-            'approved_at' => now(),
+            'approvedAt' => now(),
             'raw' => ['dev' => true],
-        ]);
-
-        $order->update([
-            'status' => 'paid',
-            'payment_method' => '테스트결제',
-            'paid_at' => now(),
         ]);
 
         $this->cart->clear();
