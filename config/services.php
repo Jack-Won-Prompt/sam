@@ -38,6 +38,8 @@ return [
     'toss' => [
         'client_key' => env('TOSS_CLIENT_KEY'),
         'secret_key' => env('TOSS_SECRET_KEY'),
+        'security_key' => env('TOSS_SECURITY_KEY'),
+        'mid' => env('TOSS_MID'),
     ],
 
     'kakao' => [

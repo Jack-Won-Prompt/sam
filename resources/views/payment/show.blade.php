@@ -3,7 +3,8 @@
 @section('title', '결제하기 | 강원 산양삼')
 
 @section('content')
-<div class="container-shop py-12 max-w-2xl">
+<div class="container-shop py-12 max-w-lg"
+     x-data="{ method: '카드' }">
     <div class="border border-neutral-200 rounded-xl p-6 md:p-8 bg-white">
         <div class="text-center">
             <h1 class="text-xl font-bold text-neutral-800">결제하기</h1>
@@ -26,11 +27,20 @@
             <span class="text-2xl font-extrabold text-brand-700">{{ number_format($order->total) }}원</span>
         </div>
 
-        {{-- 토스 결제위젯 (카드/간편결제(카카오·네이버·토스페이)/계좌이체/가상계좌) --}}
-        <div id="payment-method" class="mt-6"></div>
-        <div id="agreement" class="mt-2"></div>
+        {{-- 결제수단 선택 --}}
+        <div class="mt-6">
+            <p class="text-sm font-semibold text-neutral-700 mb-2">결제수단</p>
+            <div class="grid grid-cols-2 gap-2">
+                @foreach (['카드' => '신용/체크카드', '계좌이체' => '계좌이체', '가상계좌' => '무통장(가상계좌)', '휴대폰' => '휴대폰'] as $val => $label)
+                    <button type="button" @click="method = '{{ $val }}'"
+                            :class="method === '{{ $val }}' ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-neutral-300 text-neutral-600'"
+                            class="border rounded-lg py-2.5 text-sm font-medium transition">{{ $label }}</button>
+                @endforeach
+            </div>
+            <p class="text-xs text-neutral-400 mt-2">💡 <b>카드</b> 선택 시 결제창에서 카카오페이·네이버페이·토스페이 등 <b>간편결제</b>도 이용할 수 있습니다.</p>
+        </div>
 
-        <button id="payBtn" class="btn-brand w-full mt-6 py-4 text-base">{{ number_format($order->total) }}원 결제하기</button>
+        <button type="button" @click="window.tossPay(method)" class="btn-brand w-full mt-6 py-4 text-base">{{ number_format($order->total) }}원 결제하기</button>
         <p id="payError" class="text-sm text-red-500 mt-3 hidden text-center"></p>
 
         @if (app()->environment('local'))
@@ -44,45 +54,28 @@
 @endsection
 
 @push('scripts')
-<script src="https://js.tosspayments.com/v2/standard"></script>
+<script src="https://js.tosspayments.com/v1/payment"></script>
 <script>
-(async function () {
-    const clientKey = @json($clientKey);
-    const errEl = document.getElementById('payError');
-    const btn = document.getElementById('payBtn');
-    const showError = (msg) => { errEl.textContent = msg; errEl.classList.remove('hidden'); };
+    window.tossPay = function (method) {
+        const clientKey = @json($clientKey);
+        const errEl = document.getElementById('payError');
+        const showError = (msg) => { errEl.textContent = msg; errEl.classList.remove('hidden'); };
 
-    if (!clientKey) { showError('결제 설정(클라이언트 키)이 없습니다.'); return; }
+        if (!clientKey) { showError('결제 설정(클라이언트 키)이 없습니다.'); return; }
 
-    try {
         const tossPayments = TossPayments(clientKey);
-        const widgets = tossPayments.widgets({ customerKey: @json($customerKey) });
-
-        await widgets.setAmount({ currency: 'KRW', value: {{ $order->total }} });
-        await Promise.all([
-            widgets.renderPaymentMethods({ selector: '#payment-method', variantKey: 'DEFAULT' }),
-            widgets.renderAgreement({ selector: '#agreement', variantKey: 'AGREEMENT' }),
-        ]);
-
-        btn.addEventListener('click', async function () {
-            errEl.classList.add('hidden');
-            try {
-                await widgets.requestPayment({
-                    orderId: @json($order->order_number),
-                    orderName: @json($order->items->first()->product_name . ($order->items->count() > 1 ? ' 외 '.($order->items->count()-1).'건' : '')),
-                    customerName: @json($order->orderer_name),
-                    customerMobilePhone: @json(preg_replace('/[^0-9]/', '', $order->orderer_phone)),
-                    successUrl: @json(route('payment.success')),
-                    failUrl: @json(route('payment.fail')),
-                });
-            } catch (e) {
-                if (e.code === 'USER_CANCEL') showError('결제를 취소하셨습니다.');
-                else showError(e.message || '결제 중 오류가 발생했습니다.');
-            }
+        tossPayments.requestPayment(method || '카드', {
+            amount: {{ $order->total }},
+            orderId: @json($order->order_number),
+            orderName: @json($order->items->first()->product_name . ($order->items->count() > 1 ? ' 외 '.($order->items->count()-1).'건' : '')),
+            customerName: @json($order->orderer_name),
+            customerMobilePhone: @json(preg_replace('/[^0-9]/', '', $order->orderer_phone)),
+            successUrl: @json(route('payment.success')),
+            failUrl: @json(route('payment.fail')),
+        }).catch(function (error) {
+            if (error.code === 'USER_CANCEL') showError('결제를 취소하셨습니다.');
+            else showError(error.message || '결제 중 오류가 발생했습니다.');
         });
-    } catch (e) {
-        showError('결제창을 불러오지 못했습니다. 테스트/운영 키를 확인해 주세요.');
-    }
-})();
+    };
 </script>
 @endpush
