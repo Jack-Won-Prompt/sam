@@ -19,6 +19,7 @@
         @php
             $nav = [
                 ['admin.dashboard', 'admin.dashboard', '대시보드', '📊'],
+                ['admin.analytics.index', 'admin.analytics.*', '방문 통계', '📈'],
                 ['admin.products.index', 'admin.products.*', '상품 관리', '📦'],
                 ['admin.categories.index', 'admin.categories.*', '카테고리', '🗂️'],
                 ['admin.orders.index', 'admin.orders.*', '주문 관리', '🧾'],

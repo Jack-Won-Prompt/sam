@@ -14,6 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureAdmin::class,
         ]);
+        // 방문 로그 수집 (web 그룹 끝에 추가)
+        $middleware->web(append: [
+            \App\Http\Middleware\TrackPageView::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

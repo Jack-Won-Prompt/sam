@@ -110,6 +110,9 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
+    Route::get('analytics', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::get('analytics/session', [\App\Http\Controllers\Admin\AnalyticsController::class, 'session'])->name('analytics.session');
+
     Route::resource('products', \App\Http\Controllers\Admin\ProductController::class)->except('show');
     Route::delete('product-images/{image}', [\App\Http\Controllers\Admin\ProductController::class, 'destroyImage'])->name('product-images.destroy');
 
