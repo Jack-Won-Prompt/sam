@@ -8,22 +8,41 @@ use Illuminate\Database\Seeder;
 
 class ProductSetSeeder extends Seeder
 {
+    /** 연근별 상품 구성 (연근 => 뿌리수 목록) */
+    private array $catalog = [
+        3  => [3, 5, 10, 20, 30],
+        4  => [2, 6, 15, 50],
+        5  => [3, 5, 10, 20, 30],
+        6  => [2, 5, 7, 15, 50],
+        7  => [3, 5, 10, 20, 30],
+        8  => [2, 4, 7, 10, 15],
+        10 => [3, 5, 10, 20, 30],
+        12 => [2, 3, 5],
+        15 => [2, 3],
+        20 => [2],
+    ];
+
     /** 연근별 1뿌리 기준가 */
-    private array $perRoot = [3 => 18000, 5 => 33000, 7 => 58000, 10 => 95000];
-    private array $roots = [3, 5, 10, 20, 30];
+    private array $perRoot = [
+        3 => 18000, 4 => 24000, 5 => 33000, 6 => 44000, 7 => 58000,
+        8 => 72000, 10 => 95000, 12 => 125000, 15 => 170000, 20 => 260000,
+    ];
+
+    /** 베스트(추천) 조합 — 10% 할인 적용 */
+    private array $best = ['3-10', '4-6', '5-10', '6-7', '7-10', '8-10', '10-10'];
 
     public function run(): void
     {
-        // 1) 산양삼 하위 카테고리 정비 (연근별)
-        $parent = Category::firstWhere('slug', 'sanyangsam');
-        if (! $parent) {
-            $parent = Category::create(['name' => '산양삼', 'slug' => 'sanyangsam', 'sort_order' => 0, 'is_active' => true]);
-        }
+        // 1) 산양삼 하위 카테고리(연근별) 정비
+        $parent = Category::firstWhere('slug', 'sanyangsam')
+            ?? Category::create(['name' => '산양삼', 'slug' => 'sanyangsam', 'sort_order' => 0, 'is_active' => true]);
+
         $catMap = [];
-        foreach ([3, 5, 7, 10] as $i => $year) {
+        $order = 0;
+        foreach (array_keys($this->catalog) as $year) {
             $cat = Category::updateOrCreate(
                 ['slug' => "sanyangsam-{$year}"],
-                ['name' => "{$year}년근", 'parent_id' => $parent->id, 'sort_order' => $i, 'is_active' => true]
+                ['name' => "{$year}년근", 'parent_id' => $parent->id, 'sort_order' => $order++, 'is_active' => true]
             );
             $catMap[$year] = $cat->id;
         }
@@ -34,12 +53,14 @@ class ProductSetSeeder extends Seeder
             'gift-premium-set', 'gift-basic-set',
         ])->get()->each->delete();
 
-        // 3) 20종 상품 생성
+        // 3) 상품 생성 (40종)
         $sort = 0;
-        foreach ([3, 5, 7, 10] as $year) {
-            foreach ($this->roots as $roots) {
+        foreach ($this->catalog as $year => $rootsList) {
+            foreach ($rootsList as $roots) {
+                $key = "{$year}-{$roots}";
                 $price = $this->perRoot[$year] * $roots;
-                $sale = $roots === 10 ? (int) round($price * 0.9 / 1000) * 1000 : null;
+                $isBest = in_array($key, $this->best);
+                $sale = $isBest ? (int) round($price * 0.9 / 1000) * 1000 : null;
                 $img = "products/set-{$year}yr-{$roots}.jpg";
 
                 Product::updateOrCreate(
@@ -57,8 +78,8 @@ class ProductSetSeeder extends Seeder
                         'stock' => 30,
                         'thumbnail' => file_exists(storage_path('app/public/' . $img)) ? $img : null,
                         'is_active' => true,
-                        'is_best' => in_array($year, [5, 7]) && $roots === 10,
-                        'is_new' => $year === 10,
+                        'is_best' => $isBest,
+                        'is_new' => $year >= 10,
                         'shipping_fee' => 0,
                         'sort_order' => $sort++,
                     ]
