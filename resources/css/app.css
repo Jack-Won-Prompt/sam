@@ -124,3 +124,19 @@ html.js [data-reveal].is-visible {
 .zoom-frame > div {
     transition: transform 0.15s ease-out;
 }
+
+/* ---------------------------------------------------------------------------
+   전역 톤: 아이콘 선(테두리)·글씨 조금 얇게
+--------------------------------------------------------------------------- */
+
+/* 아이콘 SVG 선 얇게 (path 등의 stroke-width 속성까지 덮어씀) */
+svg { stroke-width: 1.5px; }
+svg [stroke-width] { stroke-width: 1.5px; }
+
+/* 폰트 굵기 한 단계씩 얇게 (Pretendard 가변폰트) */
+body { font-weight: 380; }
+.font-normal    { font-weight: 380; }
+.font-medium    { font-weight: 440; }
+.font-semibold  { font-weight: 520; }
+.font-bold      { font-weight: 600; }
+.font-extrabold { font-weight: 680; }
