@@ -1,5 +1,6 @@
 import './bootstrap';
 import './premium';
+import './realtime';
 
 import Alpine from 'alpinejs';
 

@@ -47,6 +47,8 @@
 
     @include('partials.footer')
 
+    @include('partials.chat-widget')
+
     @stack('scripts')
 </body>
 </html>

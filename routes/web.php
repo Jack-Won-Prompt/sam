@@ -17,6 +17,13 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// 실시간 채팅 (고객)
+Route::controller(\App\Http\Controllers\ChatController::class)->prefix('chat')->name('chat.')->group(function () {
+    Route::get('/conversation', 'conversation')->name('conversation');
+    Route::post('/send', 'send')->name('send');
+    Route::get('/poll', 'poll')->name('poll');
+});
+
 // SEO (robots.txt는 public/robots.txt 정적 파일로 제공)
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
 
@@ -112,6 +119,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('analytics', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('analytics.index');
     Route::get('analytics/session', [\App\Http\Controllers\Admin\AnalyticsController::class, 'session'])->name('analytics.session');
+
+    // 실시간 상담(채팅)
+    Route::get('chats', [\App\Http\Controllers\Admin\ChatController::class, 'index'])->name('chats.index');
+    Route::get('chats/list', [\App\Http\Controllers\Admin\ChatController::class, 'list'])->name('chats.list');
+    Route::get('chats/{conversation}', [\App\Http\Controllers\Admin\ChatController::class, 'show'])->name('chats.show');
+    Route::get('chats/{conversation}/poll', [\App\Http\Controllers\Admin\ChatController::class, 'poll'])->name('chats.poll');
+    Route::post('chats/{conversation}/reply', [\App\Http\Controllers\Admin\ChatController::class, 'reply'])->name('chats.reply');
 
     Route::resource('products', \App\Http\Controllers\Admin\ProductController::class)->except('show');
     Route::delete('product-images/{image}', [\App\Http\Controllers\Admin\ProductController::class, 'destroyImage'])->name('product-images.destroy');

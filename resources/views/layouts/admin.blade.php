@@ -19,6 +19,7 @@
         @php
             $nav = [
                 ['admin.dashboard', 'admin.dashboard', '대시보드', '📊'],
+                ['admin.chats.index', 'admin.chats.*', '실시간 상담', '🗨️'],
                 ['admin.analytics.index', 'admin.analytics.*', '방문 통계', '📈'],
                 ['admin.products.index', 'admin.products.*', '상품 관리', '📦'],
                 ['admin.categories.index', 'admin.categories.*', '카테고리', '🗂️'],
@@ -71,5 +72,31 @@
     </div>
 </div>
 @stack('scripts')
+<script>
+// 사이드바 '실시간 상담' 미확인 배지 (모든 관리자 페이지에서 폴링)
+(function () {
+    const link = document.querySelector('a[href="{{ route('admin.chats.index') }}"]');
+    if (!link) return;
+    let badge = null;
+    window.updateChatBadge = function (count) {
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'ml-auto min-w-5 h-5 px-1 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center';
+            link.appendChild(badge);
+        }
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'flex' : 'none';
+    };
+    async function poll() {
+        try {
+            const res = await fetch('{{ route('admin.chats.list') }}', { headers: { 'Accept': 'application/json' } });
+            const data = await res.json();
+            window.updateChatBadge(data.total_unread || 0);
+        } catch (e) {}
+    }
+    poll();
+    setInterval(poll, 12000);
+})();
+</script>
 </body>
 </html>
