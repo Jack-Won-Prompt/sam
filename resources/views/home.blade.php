@@ -63,27 +63,6 @@
     </div>
 </section>
 
-{{-- 카테고리 바로가기 --}}
-<section class="container-shop py-12" data-reveal>
-    <h2 class="text-xl md:text-2xl font-bold text-center text-neutral-800 mb-8">카테고리</h2>
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        @foreach ($mainCategories as $cat)
-            <a href="{{ route('category.show', $cat) }}"
-               class="group flex flex-col items-center gap-3 rounded-xl border border-neutral-200 bg-white py-8 hover:border-brand-400 hover:shadow-md transition">
-                <span class="text-4xl group-hover:scale-110 transition">
-                    @switch($cat->slug)
-                        @case('sanyangsam') 🌿 @break
-                        @case('gift') 🎁 @break
-                        @case('processed') 🧃 @break
-                        @default 🌾
-                    @endswitch
-                </span>
-                <span class="font-semibold text-neutral-700 group-hover:text-brand-700">{{ $cat->name }}</span>
-            </a>
-        @endforeach
-    </div>
-</section>
-
 {{-- 베스트 상품 --}}
 @if ($bestProducts->isNotEmpty())
 <section class="container-shop py-8" data-reveal>
