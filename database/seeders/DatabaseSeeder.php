@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
             ShopSeeder::class,
             ProductSetSeeder::class,
             ProductExtraSeeder::class,
+            RealPhotoSeeder::class,
         ]);
     }
 }

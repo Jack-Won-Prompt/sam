@@ -79,6 +79,7 @@
                 </div>
             @endforeach
             <a href="{{ route('collection', 'sale') }}" class="px-4 py-3 text-sm font-semibold text-neutral-700 hover:text-brand-700">특가</a>
+            <a href="{{ route('story') }}" class="px-4 py-3 text-sm font-semibold text-brand-700 hover:text-brand-800">🌱 재배 이야기</a>
         </div>
     </nav>
 
@@ -92,6 +93,7 @@
             @foreach ($navCategories as $cat)
                 <a href="{{ route('category.show', $cat) }}" class="block px-4 py-2.5 text-sm font-semibold text-neutral-700">{{ $cat->name }}</a>
             @endforeach
+            <a href="{{ route('story') }}" class="block px-4 py-2.5 text-sm font-semibold text-brand-700">🌱 재배 이야기</a>
         </nav>
     </div>
 </header>

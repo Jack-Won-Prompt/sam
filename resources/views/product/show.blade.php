@@ -162,6 +162,9 @@
     {{-- 상품 Q&A --}}
     @include('partials.qna')
 
+    {{-- 무농약 품질 인증 --}}
+    @include('partials.quality-cert')
+
     {{-- 배송/교환·반품 안내 --}}
     @include('partials.shipping-policy')
 

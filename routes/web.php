@@ -29,6 +29,8 @@ Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'ind
 
 Route::get('/search', [ProductController::class, 'search'])->name('search');
 
+Route::view('/story', 'story')->name('story');
+
 Route::get('/collection/{type}', [CategoryController::class, 'collection'])->name('collection');
 Route::get('/category/{category}', [CategoryController::class, 'show'])->name('category.show');
 Route::get('/product/{product}', [ProductController::class, 'show'])->name('product.show');
