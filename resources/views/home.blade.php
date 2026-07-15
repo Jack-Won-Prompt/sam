@@ -63,6 +63,22 @@
     </div>
 </section>
 
+{{-- 연근별 산양삼 라인업 --}}
+@if ($lineup->isNotEmpty())
+<section class="container-shop py-8" data-reveal>
+    <div class="text-center mb-8">
+        <p class="text-gold-500 font-semibold text-sm">LINEUP</p>
+        <h2 class="text-xl md:text-2xl font-bold text-neutral-800">연근별 산양삼</h2>
+        <p class="text-neutral-500 mt-2 text-sm">6년근부터 15년근까지, 원하시는 연근을 선택하세요</p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8">
+        @foreach ($lineup as $product)
+            <x-product-card :product="$product" />
+        @endforeach
+    </div>
+</section>
+@endif
+
 {{-- 국가 공인 품질검사 인증 (합격증·검사서) --}}
 <section class="container-shop py-12" x-data="{ zoom: null }" data-reveal>
     <div class="text-center mb-8">
@@ -102,22 +118,6 @@
         <img :src="zoom" alt="인증 서류 확대" class="max-w-full max-h-full rounded shadow-2xl">
     </div>
 </section>
-
-{{-- 연근별 산양삼 라인업 --}}
-@if ($lineup->isNotEmpty())
-<section class="container-shop py-8" data-reveal>
-    <div class="text-center mb-8">
-        <p class="text-gold-500 font-semibold text-sm">LINEUP</p>
-        <h2 class="text-xl md:text-2xl font-bold text-neutral-800">연근별 산양삼</h2>
-        <p class="text-neutral-500 mt-2 text-sm">6년근부터 15년근까지, 원하시는 연근을 선택하세요</p>
-    </div>
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8">
-        @foreach ($lineup as $product)
-            <x-product-card :product="$product" />
-        @endforeach
-    </div>
-</section>
-@endif
 
 {{-- 브랜드 스토리 + 재배 현장 영상 --}}
 <section class="my-12 bg-brand-800 text-white" data-reveal>

@@ -32,18 +32,39 @@
 
     <div class="grid md:grid-cols-2 gap-10">
         {{-- 이미지 --}}
-        <div>
-            <x-thumb :product="$product" class="aspect-square rounded-xl shadow-sm {{ $product->thumbnail ? 'zoom-frame' : '' }}" />
-            @if ($product->images->isNotEmpty())
-                <div class="grid grid-cols-5 gap-2 mt-3">
-                    @foreach ($product->images->take(5) as $img)
-                        <div class="aspect-square rounded-md overflow-hidden border border-neutral-200">
-                            <img src="{{ asset('storage/' . $img->path) }}" class="w-full h-full object-cover" alt="">
-                        </div>
-                    @endforeach
+        @php
+            $gallery = collect();
+            if ($product->thumbnail) {
+                $gallery->push($product->thumbnail);
+            }
+            foreach ($product->images as $img) {
+                $gallery->push($img->path);
+            }
+            $gallery = $gallery->unique()->values();
+        @endphp
+        @if ($gallery->isNotEmpty())
+            <div x-data="{ main: '{{ asset('storage/' . $gallery->first()) }}' }">
+                <div class="aspect-square rounded-xl shadow-sm overflow-hidden bg-neutral-100">
+                    <img :src="main" alt="{{ $product->name }}" class="w-full h-full object-cover">
                 </div>
-            @endif
-        </div>
+                @if ($gallery->count() > 1)
+                    <div class="grid grid-cols-5 gap-2 mt-3">
+                        @foreach ($gallery->take(5) as $path)
+                            @php $url = asset('storage/' . $path); @endphp
+                            <button type="button" @click="main = '{{ $url }}'"
+                                    class="aspect-square rounded-md overflow-hidden border-2 transition"
+                                    :class="main === '{{ $url }}' ? 'border-brand-500' : 'border-neutral-200 hover:border-brand-300'">
+                                <img src="{{ $url }}" class="w-full h-full object-cover" alt="">
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        @else
+            <div>
+                <x-thumb :product="$product" class="aspect-square rounded-xl shadow-sm" />
+            </div>
+        @endif
 
         {{-- 정보 --}}
         <div>
