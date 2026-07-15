@@ -56,30 +56,17 @@
         </div>
     </div>
 
-    {{-- 카테고리 네비게이션 --}}
+    {{-- 카테고리 네비게이션 (연근 라인업) --}}
     <nav class="border-t border-neutral-200 hidden md:block">
-        <div class="container-shop flex items-center gap-1">
-            <a href="{{ route('collection', 'best') }}" class="px-4 py-3 text-sm font-bold text-red-600 hover:text-red-700">🔥 베스트</a>
+        <div class="container-shop flex items-center justify-center gap-1">
             @foreach ($navCategories as $cat)
-                <div class="relative group">
-                    <a href="{{ route('category.show', $cat) }}"
-                       class="block px-4 py-3 text-sm font-semibold text-neutral-700 hover:text-brand-700">
-                        {{ $cat->name }}
-                    </a>
-                    @if ($cat->children->isNotEmpty())
-                        <div class="absolute left-0 top-full hidden group-hover:block bg-white border border-neutral-200 rounded-b-md shadow-lg min-w-[160px] py-2 z-50">
-                            @foreach ($cat->children as $child)
-                                <a href="{{ route('category.show', $child) }}"
-                                   class="block px-4 py-2 text-sm text-neutral-600 hover:bg-brand-50 hover:text-brand-700">
-                                    {{ $child->name }}
-                                </a>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
+                <a href="{{ route('category.show', $cat) }}"
+                   class="block px-5 py-3 text-sm font-semibold text-neutral-700 hover:text-brand-700">
+                    {{ $cat->name }}
+                </a>
             @endforeach
-            <a href="{{ route('collection', 'sale') }}" class="px-4 py-3 text-sm font-semibold text-neutral-700 hover:text-brand-700">특가</a>
-            <a href="{{ route('story') }}" class="px-4 py-3 text-sm font-semibold text-brand-700 hover:text-brand-800">🌱 재배 이야기</a>
+            <span class="w-px h-4 bg-neutral-200 mx-1"></span>
+            <a href="{{ route('story') }}" class="px-5 py-3 text-sm font-semibold text-brand-700 hover:text-brand-800">🌱 재배 이야기</a>
         </div>
     </nav>
 
@@ -89,7 +76,6 @@
             <input type="text" name="q" placeholder="상품 검색" class="w-full rounded-md border-neutral-300 text-sm">
         </form>
         <nav class="pb-3">
-            <a href="{{ route('collection', 'best') }}" class="block px-4 py-2.5 text-sm font-bold text-red-600">🔥 베스트</a>
             @foreach ($navCategories as $cat)
                 <a href="{{ route('category.show', $cat) }}" class="block px-4 py-2.5 text-sm font-semibold text-neutral-700">{{ $cat->name }}</a>
             @endforeach

@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             ProductSetSeeder::class,
             ProductExtraSeeder::class,
             RealPhotoSeeder::class,
+            LineupSeeder::class,
         ]);
     }
 }

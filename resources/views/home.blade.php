@@ -63,18 +63,56 @@
     </div>
 </section>
 
-{{-- 베스트 상품 --}}
-@if ($bestProducts->isNotEmpty())
-<section class="container-shop py-8" data-reveal>
-    <div class="flex items-end justify-between mb-6">
-        <div>
-            <p class="text-gold-500 font-semibold text-sm">BEST</p>
-            <h2 class="text-xl md:text-2xl font-bold text-neutral-800">이달의 베스트 산양삼</h2>
-        </div>
-        <a href="{{ route('collection', 'best') }}" class="text-sm text-neutral-500 hover:text-brand-700">더보기 →</a>
+{{-- 국가 공인 품질검사 인증 (합격증·검사서) --}}
+<section class="container-shop py-12" x-data="{ zoom: null }" data-reveal>
+    <div class="text-center mb-8">
+        <p class="text-brand-600 font-semibold text-sm">QUALITY CERTIFIED</p>
+        <h2 class="text-xl md:text-2xl font-bold text-neutral-800">국가 공인 품질검사 합격</h2>
+        <p class="text-neutral-500 mt-2 text-sm">
+            한국임업진흥원 특별관리임산물 품질검사 · <strong class="text-brand-700">잔류농약 164종 전 항목 불검출(ND)</strong>
+        </p>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
-        @foreach ($bestProducts as $product)
+
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-3 md:gap-4">
+        @foreach ([
+            ['cert/quality-pass.jpg', '품질검사 합격증'],
+            ['cert/quality-proof.jpg', '품질검사 결과증명서'],
+            ['cert/report-01.jpg', '분석성적서 (1)'],
+            ['cert/report-02.jpg', '분석성적서 (2)'],
+            ['cert/report-03.jpg', '분석성적서 (3)'],
+            ['cert/report-04.jpg', '분석성적서 (4)'],
+        ] as [$img, $cap])
+            <figure>
+                <button type="button" @click="zoom = '{{ asset('storage/' . $img) }}'"
+                        class="block w-full aspect-[3/4] rounded-lg overflow-hidden bg-white border border-neutral-200 hover:border-brand-400 hover:shadow-md transition group">
+                    <img src="{{ asset('storage/' . $img) }}" loading="lazy" alt="{{ $cap }}"
+                         class="w-full h-full object-contain p-1 group-hover:scale-[1.03] transition duration-300">
+                </button>
+                <figcaption class="mt-1.5 text-center text-xs text-neutral-600 font-medium">{{ $cap }}</figcaption>
+            </figure>
+        @endforeach
+    </div>
+    <p class="mt-4 text-center text-[11px] text-neutral-400">
+        ※ 개인정보 보호를 위해 성적서 일부(생년월일·연락처)는 마스킹 처리되었습니다. 이미지를 누르면 크게 볼 수 있습니다.
+    </p>
+
+    {{-- 확대 --}}
+    <div x-show="zoom" x-cloak @keydown.escape.window="zoom = null" @click="zoom = null"
+         class="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4 cursor-zoom-out" style="display:none;">
+        <img :src="zoom" alt="인증 서류 확대" class="max-w-full max-h-full rounded shadow-2xl">
+    </div>
+</section>
+
+{{-- 연근별 산양삼 라인업 --}}
+@if ($lineup->isNotEmpty())
+<section class="container-shop py-8" data-reveal>
+    <div class="text-center mb-8">
+        <p class="text-gold-500 font-semibold text-sm">LINEUP</p>
+        <h2 class="text-xl md:text-2xl font-bold text-neutral-800">연근별 산양삼</h2>
+        <p class="text-neutral-500 mt-2 text-sm">6년근부터 15년근까지, 원하시는 연근을 선택하세요</p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8">
+        @foreach ($lineup as $product)
             <x-product-card :product="$product" />
         @endforeach
     </div>

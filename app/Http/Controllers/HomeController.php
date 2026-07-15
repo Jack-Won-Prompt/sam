@@ -12,6 +12,9 @@ class HomeController extends Controller
     {
         $banners = Banner::active()->where('position', 'main_slider')->orderBy('sort_order')->get();
 
+        // 연근별 라인업 (메인 상품 진열)
+        $lineup = Product::active()->orderBy('sort_order')->get();
+
         $bestProducts = Product::active()->where('is_best', true)->latest()->take(8)->get();
         $newProducts = Product::active()->where('is_new', true)->latest()->take(8)->get();
 
@@ -27,6 +30,6 @@ class HomeController extends Controller
                 ->sortBy(fn ($p) => array_search($p->id, $recentIds))->values();
         }
 
-        return view('home', compact('banners', 'bestProducts', 'newProducts', 'mainCategories', 'recentProducts'));
+        return view('home', compact('banners', 'lineup', 'bestProducts', 'newProducts', 'mainCategories', 'recentProducts'));
     }
 }
