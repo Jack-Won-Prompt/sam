@@ -60,7 +60,8 @@
     <nav class="border-t border-neutral-200 hidden md:block">
         <div class="container-shop flex items-center justify-center gap-1">
             @foreach ($navCategories as $cat)
-                <a href="{{ route('category.show', $cat) }}"
+                @php $navProduct = $cat->products->first(); @endphp
+                <a href="{{ $navProduct ? route('product.show', $navProduct) : route('category.show', $cat) }}"
                    class="block px-5 py-3 text-sm font-semibold text-neutral-700 hover:text-brand-700">
                     {{ $cat->name }}
                 </a>
@@ -77,7 +78,8 @@
         </form>
         <nav class="pb-3">
             @foreach ($navCategories as $cat)
-                <a href="{{ route('category.show', $cat) }}" class="block px-4 py-2.5 text-sm font-semibold text-neutral-700">{{ $cat->name }}</a>
+                @php $navProduct = $cat->products->first(); @endphp
+                <a href="{{ $navProduct ? route('product.show', $navProduct) : route('category.show', $cat) }}" class="block px-4 py-2.5 text-sm font-semibold text-neutral-700">{{ $cat->name }}</a>
             @endforeach
             <a href="{{ route('story') }}" class="block px-4 py-2.5 text-sm font-semibold text-brand-700">🌱 재배 이야기</a>
         </nav>

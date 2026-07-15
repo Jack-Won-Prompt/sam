@@ -88,7 +88,7 @@ class LineupSeeder extends Seeder
                     'price' => $line['price'],
                     'sale_price' => null,
                     'stock' => 30,
-                    'thumbnail' => 'lineup/box-cover.jpg',
+                    'thumbnail' => $line['thumb'],
                     'is_active' => true,
                     'is_best' => false,
                     'is_new' => false,

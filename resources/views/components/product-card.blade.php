@@ -4,6 +4,10 @@
     <div class="product-card-media relative rounded-lg overflow-hidden border border-neutral-200 bg-white transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1 group-hover:border-brand-200">
         <x-thumb :product="$product" class="aspect-square" />
 
+        {{-- 품질검사 합격증 (정식 제품 증표) --}}
+        <img src="{{ asset('storage/cert/quality-pass.jpg') }}" alt="품질검사 합격증"
+             class="absolute top-1.5 right-1.5 w-[20%] rounded shadow-md ring-1 ring-black/10 pointer-events-none">
+
         <div class="absolute top-2 left-2 flex flex-col gap-1">
             @if ($product->discount_rate > 0)
                 <span class="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">{{ $product->discount_rate }}%</span>

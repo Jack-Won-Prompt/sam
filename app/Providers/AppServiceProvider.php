@@ -22,7 +22,10 @@ class AppServiceProvider extends ServiceProvider
         View::composer(['layouts.shop', 'partials.*'], function ($view) {
             $navCategories = Category::whereNull('parent_id')
                 ->where('is_active', true)
-                ->with(['children' => fn ($q) => $q->where('is_active', true)])
+                ->with([
+                    'children' => fn ($q) => $q->where('is_active', true),
+                    'products' => fn ($q) => $q->where('is_active', true)->orderBy('sort_order'),
+                ])
                 ->orderBy('sort_order')
                 ->get();
 

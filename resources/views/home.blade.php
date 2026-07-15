@@ -89,6 +89,18 @@
         </p>
     </div>
 
+    {{-- 정식 제품 강조 --}}
+    <div class="mx-auto max-w-3xl mb-8 rounded-xl bg-brand-700 text-white px-5 py-5 text-center shadow-sm">
+        <p class="text-base md:text-xl font-extrabold leading-snug">
+            <span class="text-gold-400">품질검사 합격증</span>이 없는 산양삼은
+            <span class="underline decoration-gold-400 decoration-2 underline-offset-4">정식 제품이 아닙니다</span>
+        </p>
+        <p class="mt-2 text-sm text-white/85 leading-relaxed">
+            강원산양삼은 모든 상품에 국가 공인 <strong class="text-white">품질검사 합격증</strong>을 발급받은
+            정식 제품만을 판매합니다. 구매 전 반드시 합격증을 확인하세요.
+        </p>
+    </div>
+
     <div class="grid grid-cols-2 md:grid-cols-6 gap-3 md:gap-4">
         @foreach ([
             ['cert/quality-pass.jpg', '품질검사 합격증'],
@@ -211,6 +223,17 @@
     </div>
 </section>
 @endif
+
+{{-- 정품 인증 QR (실시간 상담창 위 · 합격증 2D 바코드 → 재배이력 조회) --}}
+<a href="https://sam.kofpi.or.kr/mob/selectCltvaHstrSearch.do?qtyTestSeqNo=93468d9c2c92dd22a12be976549d4c6268c26c2a8c47d2e50173df52467ff"
+   target="_blank" rel="noopener"
+   class="fixed right-4 md:right-6 bottom-40 md:bottom-24 z-[60] group"
+   title="품질검사 합격증 정품 인증 조회">
+    <div class="bg-white rounded-xl shadow-lg border border-neutral-200 p-2 w-[4.5rem] md:w-24 text-center hover:shadow-xl hover:border-brand-300 transition">
+        <img src="{{ asset('storage/cert/qr-code.png') }}" alt="정품 인증 QR" class="w-full rounded">
+        <p class="mt-1 text-[10px] font-bold text-brand-700 leading-tight">정품 인증 조회</p>
+    </div>
+</a>
 
 @endsection
 
