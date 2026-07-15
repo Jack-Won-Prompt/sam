@@ -88,7 +88,7 @@ class LineupSeeder extends Seeder
                     'price' => $line['price'],
                     'sale_price' => null,
                     'stock' => 30,
-                    'thumbnail' => $line['thumb'],
+                    'thumbnail' => 'lineup/box-cover.jpg',
                     'is_active' => true,
                     'is_best' => false,
                     'is_new' => false,
@@ -97,9 +97,10 @@ class LineupSeeder extends Seeder
                 ]
             );
 
-            // 4) 갤러리 이미지 재구성
+            // 4) 갤러리 이미지 재구성 (대표 실사컷 + 추가컷)
             ProductImage::where('product_id', $product->id)->delete();
-            foreach ($line['gallery'] as $i => $path) {
+            $gallery = array_merge([$line['thumb']], $line['gallery']);
+            foreach ($gallery as $i => $path) {
                 if (file_exists(storage_path('app/public/' . $path))) {
                     ProductImage::create(['product_id' => $product->id, 'path' => $path, 'sort_order' => $i]);
                 }

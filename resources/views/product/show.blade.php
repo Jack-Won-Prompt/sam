@@ -74,6 +74,21 @@
             <h1 class="mt-3 text-2xl font-bold text-neutral-900 leading-snug">{{ $product->name }}</h1>
             <p class="mt-2 text-neutral-500">{{ $product->short_description }}</p>
 
+            {{-- 정식 제품 인증 (품질검사 합격증) --}}
+            <div x-data="{ show: false }" class="mt-3">
+                <button type="button" @click="show = true"
+                        class="inline-flex items-center gap-2 rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 hover:bg-brand-100 transition">
+                    <span class="flex items-center justify-center w-5 h-5 rounded-full bg-brand-600 text-white text-xs font-bold">✓</span>
+                    <span class="text-sm font-semibold text-brand-800">국가 품질검사 <span class="text-brand-600">합격</span> 정식 제품</span>
+                    <span class="text-xs text-brand-500 underline">합격증 보기</span>
+                </button>
+                <div x-show="show" x-cloak @click="show = false" @keydown.escape.window="show = false"
+                     class="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4 cursor-zoom-out" style="display:none;">
+                    <img src="{{ asset('storage/cert/quality-pass.jpg') }}" alt="품질검사 합격증"
+                         class="max-w-full max-h-full rounded shadow-2xl">
+                </div>
+            </div>
+
             @if ($product->reviews->isNotEmpty())
                 <a href="#reviews" class="mt-2 inline-flex items-center gap-1.5 text-sm">
                     <span class="text-gold-500">

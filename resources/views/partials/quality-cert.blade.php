@@ -28,9 +28,9 @@
     {{-- 인증 서류 --}}
     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
         @foreach ([
-            ['cert/analysis-1.jpg', '분석 성적서 (1)', '잔류농약 검사항목 1~36'],
-            ['cert/analysis-2.jpg', '분석 성적서 (2)', '잔류농약 검사항목 37~86'],
-            ['cert/forestry.jpg',   '임업후계자 증서', '횡성군 발급 · 재배 자격'],
+            ['cert/quality-pass.jpg',  '품질검사 합격증', '한국임업진흥원 · 정식 제품 증표'],
+            ['cert/quality-proof.jpg', '품질검사 결과증명서', '농약검사 합격'],
+            ['cert/report-01.jpg',     '분석 성적서', '잔류농약 164종 불검출(ND)'],
         ] as [$path, $title, $desc])
             <figure>
                 <button type="button" @click="zoom = '{{ asset('storage/' . $path) }}'"
