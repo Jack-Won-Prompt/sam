@@ -67,7 +67,10 @@
                 </a>
             @endforeach
             <span class="w-px h-4 bg-neutral-200 mx-1"></span>
-            <a href="{{ route('story') }}" class="px-5 py-3 text-sm font-semibold text-brand-700 hover:text-brand-800">🌱 재배 이야기</a>
+            <a href="{{ route('story') }}" class="inline-flex items-center gap-1.5 px-5 py-3 text-sm font-semibold text-neutral-700 hover:text-brand-700">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 21V11M12 21c-4 0-6.5-2.5-6.5-6.5C9.5 14.5 12 17 12 21zM12 15c0-3.6 2.4-6 6-6 0 3.6-2.4 6-6 6z"/></svg>
+                재배 이야기
+            </a>
         </div>
     </nav>
 
@@ -81,7 +84,10 @@
                 @php $navProduct = $cat->products->first(); @endphp
                 <a href="{{ $navProduct ? route('product.show', $navProduct) : route('category.show', $cat) }}" class="block px-4 py-2.5 text-sm font-semibold text-neutral-700">{{ $cat->name }}</a>
             @endforeach
-            <a href="{{ route('story') }}" class="block px-4 py-2.5 text-sm font-semibold text-brand-700">🌱 재배 이야기</a>
+            <a href="{{ route('story') }}" class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold text-neutral-700">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 21V11M12 21c-4 0-6.5-2.5-6.5-6.5C9.5 14.5 12 17 12 21zM12 15c0-3.6 2.4-6 6-6 0 3.6-2.4 6-6 6z"/></svg>
+                재배 이야기
+            </a>
         </nav>
     </div>
 </header>

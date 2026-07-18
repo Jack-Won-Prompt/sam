@@ -52,12 +52,20 @@
 @endif
 
 {{-- 신뢰 배지 --}}
-<section class="bg-brand-50 border-b border-brand-100">
-    <div class="container-shop grid grid-cols-2 md:grid-cols-4 gap-4 py-6 text-center">
-        @foreach ([['🏔️','청정 강원도 재배'], ['🌱','무농약 자연재배'], ['🚚','5만원 이상 무료배송'], ['🔒','안전한 간편결제']] as [$icon, $label])
-            <div class="flex flex-col items-center gap-1">
-                <span class="text-2xl">{{ $icon }}</span>
-                <span class="text-sm font-medium text-brand-800">{{ $label }}</span>
+<section class="bg-white border-b border-neutral-100">
+    <div class="container-shop grid grid-cols-2 md:grid-cols-4 gap-4 py-6">
+        @php
+            $trust = [
+                ['청정 강원도 재배', '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 20h18M5 20l4.2-8 3 4.4L15 12l4 8"/>'],
+                ['무농약 자연재배', '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 21V11M12 21c-4 0-6.5-2.5-6.5-6.5C9.5 14.5 12 17 12 21zM12 15c0-3.6 2.4-6 6-6 0 3.6-2.4 6-6 6z"/>'],
+                ['5만원 이상 무료배송', '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 6h11v9H3zM14 9h3.5L21 12v3h-7zM7.5 18.5a1.8 1.8 0 100-3.6 1.8 1.8 0 000 3.6zM17 18.5a1.8 1.8 0 100-3.6 1.8 1.8 0 000 3.6z"/>'],
+                ['안전한 간편결제', '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 3l7 3v5c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3zM9 12l2 2 4-4"/>'],
+            ];
+        @endphp
+        @foreach ($trust as [$label, $path])
+            <div class="flex items-center justify-center gap-2.5">
+                <svg class="w-7 h-7 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">{!! $path !!}</svg>
+                <span class="text-sm font-semibold text-neutral-700">{{ $label }}</span>
             </div>
         @endforeach
     </div>
