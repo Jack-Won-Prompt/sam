@@ -42,6 +42,7 @@
             }
             $gallery = $gallery->unique()->values();
         @endphp
+        <div>
         @if ($gallery->isNotEmpty())
             <div x-data="{ main: '{{ asset('storage/' . $gallery->first()) }}' }">
                 <div class="aspect-square rounded-xl shadow-sm overflow-hidden bg-neutral-100">
@@ -65,6 +66,13 @@
                 <x-thumb :product="$product" class="aspect-square rounded-xl shadow-sm" />
             </div>
         @endif
+
+            {{-- 실물 안내 --}}
+            <p class="mt-3 flex items-center gap-1.5 text-xs text-neutral-400">
+                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                산양삼은 자연에서 자란 임산물로, 실물의 크기·형태·색상은 사진과 다를 수 있습니다.
+            </p>
+        </div>
 
         {{-- 정보 --}}
         <div>
