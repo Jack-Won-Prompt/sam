@@ -39,7 +39,7 @@
     </div>
 
     {{-- 플로팅 버튼 --}}
-    <button @click="toggle()" class="relative w-14 h-14 rounded-full bg-brand-700 text-white shadow-lg hover:bg-brand-800 hover:scale-105 transition flex items-center justify-center">
+    <button @click="toggle()" class="icon-on-dark relative w-14 h-14 rounded-full bg-brand-700 text-white shadow-lg hover:bg-brand-800 hover:scale-105 transition flex items-center justify-center">
         <svg x-show="!open" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.9 9.9 0 01-4-.8L3 21l1.3-3.5A7.9 7.9 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
         <svg x-show="open" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         <span x-show="unread > 0" x-cloak x-text="unread"

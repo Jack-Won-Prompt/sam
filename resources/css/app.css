@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------------------------------------------------------------------------
+   전 화면 아이콘 통일 — 회색 윤곽선 · 무채색(채움 없음)
+--------------------------------------------------------------------------- */
+svg[fill="none"] {
+    stroke: #6b7280; /* neutral-500 회색 윤곽선 */
+}
+/* 컬러/어두운 버튼 위 아이콘은 가독성을 위해 흰색 유지 */
+.icon-on-dark svg[fill="none"] {
+    stroke: #ffffff;
+}
+
 @layer base {
     body {
         @apply text-neutral-800 antialiased;
