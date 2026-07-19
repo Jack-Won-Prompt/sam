@@ -156,6 +156,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('members', [\App\Http\Controllers\Admin\MemberController::class, 'index'])->name('members.index');
     Route::get('members/{member}', [\App\Http\Controllers\Admin\MemberController::class, 'show'])->name('members.show');
+    Route::put('members/{member}', [\App\Http\Controllers\Admin\MemberController::class, 'update'])->name('members.update');
 
     Route::resource('coupons', \App\Http\Controllers\Admin\CouponController::class)->except('show', 'edit', 'update');
 

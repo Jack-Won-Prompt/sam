@@ -17,6 +17,8 @@
                 <th class="px-4 py-3 font-medium">연락처</th>
                 <th class="px-4 py-3 font-medium text-center">주문수</th>
                 <th class="px-4 py-3 font-medium text-center">구분</th>
+                <th class="px-4 py-3 font-medium text-center">대행자</th>
+                <th class="px-4 py-3 font-medium text-right">캐쉬백</th>
                 <th class="px-4 py-3 font-medium">가입일</th>
             </tr>
         </thead>
@@ -34,10 +36,20 @@
                             <span class="text-xs text-neutral-500">일반</span>
                         @endif
                     </td>
+                    <td class="px-4 py-3 text-center">
+                        @if ($member->is_agent)
+                            <span class="text-xs bg-brand-600 text-white px-2 py-0.5 rounded-full">대행 {{ $member->cashback_rate }}%</span>
+                        @else
+                            <span class="text-xs text-neutral-300">-</span>
+                        @endif
+                    </td>
+                    <td class="px-4 py-3 text-right {{ $member->cashback_balance > 0 ? 'font-semibold text-brand-700' : 'text-neutral-400' }}">
+                        {{ number_format($member->cashback_balance) }}원
+                    </td>
                     <td class="px-4 py-3 text-neutral-400">{{ $member->created_at->format('Y-m-d') }}</td>
                 </tr>
             @empty
-                <tr><td colspan="6" class="px-4 py-12 text-center text-neutral-400">회원이 없습니다.</td></tr>
+                <tr><td colspan="8" class="px-4 py-12 text-center text-neutral-400">회원이 없습니다.</td></tr>
             @endforelse
         </tbody>
     </table>
