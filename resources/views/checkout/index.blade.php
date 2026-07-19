@@ -9,6 +9,30 @@
     <form method="POST" action="{{ route('checkout.store') }}" class="grid lg:grid-cols-3 gap-8">
         @csrf
         <div class="lg:col-span-2 space-y-8">
+            {{-- 구매 대행 (대행자 전용) --}}
+            @if ($agentBuyers->isNotEmpty())
+                <section class="border-2 border-brand-200 rounded-lg p-6 bg-brand-50"
+                         x-data="{ buyer: '{{ old('buyer_id') }}', total: {{ $total }}, rate: {{ $cashbackRate }} }">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-bold text-brand-800">구매 대행 주문</h2>
+                        <span class="text-xs font-semibold text-brand-700 bg-white border border-brand-200 rounded-full px-2.5 py-1">캐쉬백 {{ $cashbackRate }}%</span>
+                    </div>
+                    <label class="text-sm text-neutral-600">어느 구매자(소매처)를 위한 주문인가요?</label>
+                    <select name="buyer_id" x-model="buyer" class="mt-1 w-full rounded-md border-neutral-300 text-sm">
+                        <option value="">직접 구매 (대행 아님)</option>
+                        @foreach ($agentBuyers as $b)
+                            <option value="{{ $b->id }}">{{ $b->store_name }} · {{ $b->name }}{{ $b->phone ? ' ('.$b->phone.')' : '' }}</option>
+                        @endforeach
+                    </select>
+                    <p x-show="buyer" x-cloak class="mt-3 text-sm text-brand-800">
+                        이 주문으로 적립될 캐쉬백:
+                        <strong x-text="Math.floor(total * rate / 100).toLocaleString() + '원'"></strong>
+                        <span class="text-xs text-neutral-500">(최종 결제금액 기준, 결제완료 시 적립)</span>
+                    </p>
+                    <p class="mt-2 text-xs text-neutral-500">구매자 관리는 <a href="{{ route('agent.index') }}" class="text-brand-600 underline">구매 대행자 페이지</a>에서 할 수 있습니다.</p>
+                </section>
+            @endif
+
             {{-- 주문자 --}}
             <section class="border border-neutral-200 rounded-lg p-6 bg-white">
                 <h2 class="font-bold text-neutral-800 mb-4">주문자 정보</h2>

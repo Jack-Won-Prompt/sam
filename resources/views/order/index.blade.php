@@ -8,6 +8,7 @@
         <h1 class="text-2xl font-bold text-neutral-800">주문 내역</h1>
         <a href="{{ route('wishlist.index') }}" class="text-sm text-neutral-500 hover:text-brand-700">찜한 상품</a>
         <a href="{{ route('points.index') }}" class="text-sm text-neutral-500 hover:text-brand-700">적립금</a>
+        <a href="{{ route('agent.index') }}" class="text-sm text-neutral-500 hover:text-brand-700">구매 대행자</a>
         <a href="{{ route('profile.edit') }}" class="text-sm text-neutral-500 hover:text-brand-700">회원정보 수정</a>
     </div>
 

@@ -43,6 +43,14 @@ class OrderService
                     app(PointService::class)->earn($order->user, $earn, "주문적립 ({$order->order_number})", $order->id);
                 }
             }
+
+            // 구매 대행 주문 → 대행자 캐쉬백 적립
+            if ($order->agent_id && $order->agent && $order->cashback > 0) {
+                app(CashbackService::class)->earn(
+                    $order->agent, $order->cashback,
+                    "대행 주문 캐쉬백 ({$order->order_number})", $order->id
+                );
+            }
         });
 
         // 메일 (실패해도 주문에 영향 없게)
@@ -98,6 +106,13 @@ class OrderService
                 if ($order->points_used > 0) {
                     $ps->earn($order->user, $order->points_used, "주문취소 적립금 환급 ({$order->order_number})", $order->id);
                 }
+            }
+            // 대행 주문 캐쉬백 회수
+            if ($order->agent_id && $order->agent && $order->cashback > 0) {
+                app(CashbackService::class)->revoke(
+                    $order->agent, $order->cashback,
+                    "주문취소 캐쉬백 회수 ({$order->order_number})", $order->id
+                );
             }
             // 쿠폰 사용횟수 복구
             if ($order->coupon_code) {

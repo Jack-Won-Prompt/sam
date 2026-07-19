@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Services\CartService;
+use App\Services\CashbackService;
 use App\Services\CouponService;
 use App\Services\PointService;
 use Illuminate\Http\Request;
@@ -31,9 +32,16 @@ class CheckoutController extends Controller
         $subtotal = $this->cart->subtotal();
         $shippingFee = $this->cart->shippingFee($subtotal);
         $total = $subtotal + $shippingFee;
-        $userPoints = auth()->user()->points ?? 0;
+        $user = auth()->user();
+        $userPoints = $user->points ?? 0;
 
-        return view('checkout.index', compact('items', 'subtotal', 'shippingFee', 'total', 'userPoints'));
+        // 구매 대행자면 대행 구매자 목록 + 캐쉬백 비율 제공
+        $agentBuyers = ($user && $user->is_agent)
+            ? $user->buyers()->where('is_active', true)->get()
+            : collect();
+        $cashbackRate = ($user && $user->is_agent) ? (int) $user->cashback_rate : 0;
+
+        return view('checkout.index', compact('items', 'subtotal', 'shippingFee', 'total', 'userPoints', 'agentBuyers', 'cashbackRate'));
     }
 
     /** 쿠폰 적용 (AJAX) */
@@ -68,6 +76,7 @@ class CheckoutController extends Controller
             'delivery_message' => 'nullable|string|max:200',
             'coupon_code' => 'nullable|string|max:50',
             'points_used' => 'nullable|integer|min:0',
+            'buyer_id' => 'nullable|integer',
         ]);
 
         $subtotal = $this->cart->subtotal();
@@ -96,18 +105,34 @@ class CheckoutController extends Controller
 
         $total = max(0, $subtotal + $shippingFee - $discount - $pointsUsed);
 
-        $order = DB::transaction(function () use ($data, $items, $subtotal, $shippingFee, $discount, $pointsUsed, $couponCode, $coupon, $total, $user) {
+        // 구매 대행 주문: 대행자가 자신의 구매자를 지정한 경우 캐쉬백 산정
+        $agentId = null;
+        $buyerId = null;
+        $cashback = 0;
+        if ($user && $user->is_agent && ! empty($data['buyer_id'])) {
+            $buyer = $user->buyers()->where('is_active', true)->find($data['buyer_id']);
+            if ($buyer) {
+                $agentId = $user->id;
+                $buyerId = $buyer->id;
+                $cashback = app(CashbackService::class)->calc($total, (int) $user->cashback_rate);
+            }
+        }
+
+        $order = DB::transaction(function () use ($data, $items, $subtotal, $shippingFee, $discount, $pointsUsed, $couponCode, $coupon, $total, $user, $agentId, $buyerId, $cashback) {
             $order = Order::create(array_merge(
-                collect($data)->except(['coupon_code', 'points_used'])->toArray(),
+                collect($data)->except(['coupon_code', 'points_used', 'buyer_id'])->toArray(),
                 [
                     'order_number' => $this->generateOrderNumber(),
                     'user_id' => $user?->id,
+                    'agent_id' => $agentId,
+                    'buyer_id' => $buyerId,
                     'subtotal' => $subtotal,
                     'shipping_fee' => $shippingFee,
                     'discount' => $discount,
                     'points_used' => $pointsUsed,
                     'coupon_code' => $couponCode,
                     'total' => $total,
+                    'cashback' => $cashback,
                     'status' => 'pending',
                 ]
             ));

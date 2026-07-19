@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $fillable = [
-        'order_number', 'user_id',
+        'order_number', 'user_id', 'agent_id', 'buyer_id',
         'orderer_name', 'orderer_phone', 'orderer_email',
         'receiver_name', 'receiver_phone', 'postcode', 'address1', 'address2', 'delivery_message',
-        'subtotal', 'shipping_fee', 'discount', 'points_used', 'coupon_code', 'total',
+        'subtotal', 'shipping_fee', 'discount', 'points_used', 'coupon_code', 'total', 'cashback',
         'status', 'payment_method', 'paid_at',
         'courier', 'tracking_number', 'shipped_at', 'cancel_reason', 'cancelled_at',
     ];
@@ -43,6 +43,18 @@ class Order extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** 구매 대행자 */
+    public function agent()
+    {
+        return $this->belongsTo(User::class, 'agent_id');
+    }
+
+    /** 대행 구매자(소매처) */
+    public function buyer()
+    {
+        return $this->belongsTo(Buyer::class);
     }
 
     public function items()

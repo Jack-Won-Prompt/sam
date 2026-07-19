@@ -28,6 +28,9 @@ class User extends Authenticatable
         'password',
         'is_admin',
         'points',
+        'is_agent',
+        'cashback_rate',
+        'cashback_balance',
         'provider',
         'provider_id',
         'avatar',
@@ -54,6 +57,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'is_agent' => 'boolean',
         ];
     }
 
@@ -75,5 +79,16 @@ class User extends Authenticatable
     public function pointHistories()
     {
         return $this->hasMany(PointHistory::class)->latest();
+    }
+
+    /** 구매 대행자가 관리하는 구매자(소매처) 목록 */
+    public function buyers()
+    {
+        return $this->hasMany(Buyer::class, 'agent_id')->latest();
+    }
+
+    public function cashbackHistories()
+    {
+        return $this->hasMany(CashbackHistory::class, 'agent_id')->latest();
     }
 }

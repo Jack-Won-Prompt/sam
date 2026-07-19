@@ -106,6 +106,13 @@ Route::middleware('auth')->group(function () {
     // 적립금 내역
     Route::get('/mypage/points', [OrderController::class, 'points'])->name('points.index');
 
+    // 구매 대행자 (셀프서비스)
+    Route::get('/mypage/agent', [\App\Http\Controllers\AgentController::class, 'index'])->name('agent.index');
+    Route::post('/mypage/agent/register', [\App\Http\Controllers\AgentController::class, 'register'])->name('agent.register');
+    Route::post('/mypage/agent/buyers', [\App\Http\Controllers\AgentController::class, 'storeBuyer'])->name('agent.buyers.store');
+    Route::put('/mypage/agent/buyers/{buyer}', [\App\Http\Controllers\AgentController::class, 'updateBuyer'])->name('agent.buyers.update');
+    Route::delete('/mypage/agent/buyers/{buyer}', [\App\Http\Controllers\AgentController::class, 'destroyBuyer'])->name('agent.buyers.destroy');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
