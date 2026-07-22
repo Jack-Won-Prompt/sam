@@ -7,7 +7,23 @@
       "mcp__playwright__browser_select_option",
       "mcp__playwright__browser_wait_for",
       "mcp__playwright__browser_tabs",
-      "mcp__playwright__browser_evaluate"
+      "mcp__playwright__browser_evaluate",
+      "Bash(/e/xampp/php/php.exe \"C:/Users/82103/AppData/Local/Temp/claude/e--xampp-htdocs-sam/f12b73ec-51c0-4990-9cdc-1da5797414e7/scratchpad/process_lineup.php\")",
+      "Bash(/e/xampp/php/php.exe -d openssl.cafile= -r ' *)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" \"http://localhost/sam/\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" \"http://localhost/sam/category/yr-6-special\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" \"http://localhost/sam/product/sanyangsam-10yr\")",
+      "Bash(/e/xampp/php/php.exe -d openssl.cafile= -r '$s=getimagesize\\(\"산양삼_쇼핑몰이미지_가로형/품질검사합격증.png\"\\); echo $s[0].\"x\".$s[1].\"\\\\n\";')",
+      "Bash(python -c \"import pyzbar\")",
+      "Bash(/f/Python38/python -m pip install --quiet opencv-python-headless pyzbar)",
+      "Bash(/f/Python38/python -c ' *)",
+      "Bash(/f/Python38/python -m pip install --quiet qrcode pillow)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost/sam/product/sanyangsam-6yr\")",
+      "Bash(curl -s \"http://localhost/sam/product/sanyangsam-6yr\")",
+      "mcp__chrome-devtools__list_pages",
+      "mcp__chrome-devtools__resize_page",
+      "Bash(curl -s -o /dev/null -w \"home %{http_code}\\\\n\" \"http://localhost/sam/\")"
     ]
   }
 }
